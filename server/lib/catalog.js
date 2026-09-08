@@ -87,7 +87,13 @@ const STEAM_CDN = 'https://cdn.cloudflare.steamstatic.com/steam/apps';
 function coverUrl(id) {
   if (withArt.has(id)) return `/covers/${id}.jpg`;
   const entry = manifest[id];
-  if (entry) return `${STEAM_CDN}/${entry.appid}/${entry.variant || 'library_600x900.jpg'}`;
+  if (!entry) return null;
+  // Entries come from two sources: a Steam app id, or a direct URL for the
+  // titles Steam does not carry. Assuming an app id built
+  // ".../apps/undefined/..." and 404'd on the deployment, while local files
+  // masked it entirely.
+  if (entry.url) return entry.url;
+  if (entry.appid) return `${STEAM_CDN}/${entry.appid}/${entry.variant || 'library_600x900.jpg'}`;
   return null;
 }
 

@@ -52,8 +52,14 @@ app.use(helmet({
       scriptSrc: ["'self'"],                   // no inline scripts anywhere in this app
       styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-      // Cover art falls back to Steam's CDN when it is not on disk.
-      imgSrc: ["'self'", 'data:', 'https://cdn.cloudflare.steamstatic.com'],
+      // Cover art falls back to a CDN when it is not on disk: Steam for most
+      // titles, Wikimedia for the console exclusives Steam does not carry.
+      imgSrc: [
+        "'self'", 'data:',
+        'https://cdn.cloudflare.steamstatic.com',
+        'https://upload.wikimedia.org',
+        'https://thumb.wikimedia.org',
+      ],
       connectSrc: ["'self'"],
       objectSrc: ["'none'"],
       frameAncestors: ["'none'"],
