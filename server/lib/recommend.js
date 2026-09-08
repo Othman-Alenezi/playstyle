@@ -185,6 +185,32 @@ export function gameMatch(rows, game) {
   return displayMatch(cos * quality * familiarity * (sameGenre ? 1 : CROSS_GENRE_PENALTY));
 }
 
+/**
+ * Games most like this one, for navigating sideways from a game page.
+ * Same vectors as the recommender, so "similar" means the same thing here as
+ * it does in a match.
+ */
+export function similarTo(game, { limit = 6 } = {}) {
+  const scored = [];
+  for (const other of games) {
+    if (other.id === game.id) continue;
+    const sim = cosine(game.vector, other.vector);
+    if (sim <= 0) continue;
+    scored.push({ game: other, sim });
+  }
+  scored.sort((a, b) => b.sim - a.sim);
+  const out = [];
+  const seenFranchise = new Set([game.franchise]);
+  // One per franchise: six Call of Duty games is not a useful sideways list.
+  for (const { game: g, sim } of scored) {
+    if (seenFranchise.has(g.franchise)) continue;
+    seenFranchise.add(g.franchise);
+    out.push({ ...publicGame(g), similarity: displayMatch(sim) });
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
 /* ------------------------- reviewer taste matching ------------------------ */
 
 /**

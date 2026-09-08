@@ -78,6 +78,12 @@ taken back out as well as added.
 
 > "Every rating retrains the profile. The bars are the model, visible."
 
+**How to move between games' reviews:** click **Games** in the header for the
+whole catalogue with search, genre filters and sorting (default: most
+reviewed). Every game page also ends with **More games to read about** —
+its closest matches, each with its own reviews. So you are never stuck on one
+game.
+
 **5. Click a game title → the detail page.** This is the bit to spend time on.
 Open **Elden Ring**. Point at the two summary cards:
 

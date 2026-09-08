@@ -155,6 +155,7 @@ export function logo(href = '/') {
 export function navItems(user, { onSignOut } = {}) {
   return [
     themeToggle(),
+    el('a', { class: 'btn btn--ghost', href: '/games', text: 'Games', 'data-nav-optional': true }),
     el('a', { class: 'btn btn--ghost', href: '/fandoms', text: 'Fandoms', 'data-nav-optional': true }),
     ...(user
       ? [

@@ -322,6 +322,28 @@ async function removeMine(r) {
 
 /* ---------------------------------- load ---------------------------------- */
 
+/** Sideways navigation, so this page is not the end of the road. */
+async function paintSimilar() {
+  try {
+    const { items } = await api.similar(game.id, 6);
+    if (!items.length) return;
+    render($('#similar-row'), items.map((g) => {
+      const art = cover(g, { year: false });
+      return el('a', { class: 'similar__card', href: `/game/${encodeURIComponent(g.id)}` }, [
+        art,
+        el('span', { class: 'similar__sim', text: `${g.similarity}%` }),
+        el('div', { class: 'gamecard__body' }, [
+          el('h3', { class: 'gamecard__title', text: g.title }),
+          el('p', { class: 'gamecard__reviews', text: g.reviewCount
+            ? `${g.reviewCount} review${g.reviewCount === 1 ? '' : 's'}`
+            : 'No reviews yet' }),
+        ]),
+      ]);
+    }));
+    $('#similar').hidden = false;
+  } catch { /* optional section */ }
+}
+
 async function loadReviews() {
   try {
     const data = await api.reviews(game.id, sort);
@@ -401,6 +423,7 @@ async function boot() {
   myMatch = gameRes.value.myMatch;
   paintHead();
   await loadReviews();
+  paintSimilar();
 }
 
 boot();

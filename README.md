@@ -134,6 +134,7 @@ public/
   index.html           landing + taste quiz + guest preview
   auth.html            sign in / create account
   app.html             recommendation feed
+  games.html           browse the catalogue: search, genre filter, sorting
   game.html            one game: your match, and reviews ranked by taste match
   fandoms.html         hub directory, your fandoms first
   hub.html             one fandom: posts, upvotes, comments
@@ -278,6 +279,9 @@ HTTPS, and set `NODE_ENV=production`.
 
 | Method | Path | Auth | Purpose |
 | --- | --- | --- | --- |
+| GET | `/api/games` | – | Browse the catalogue: `q`, `genre`, `sort`, `limit`, `offset` |
+| GET | `/api/games/:id/similar` | – | Closest games, one per franchise |
+| GET | `/api/reviews/highlights` | – | Most-reviewed games, for the landing page |
 | GET | `/api/games/picker` | – | 42 games for the taste quiz, spread across genres |
 | GET | `/api/games/:id` | – | One game, plus your rating if signed in |
 | POST | `/api/preview` | – | Recommendations for unsaved picks (guest quiz) |
