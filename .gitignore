@@ -8,3 +8,6 @@ data/*.db-shm
 # Downloaded cover art (run `npm run covers` to regenerate)
 public/covers/
 data/.steam-applist.json
+
+# Per-deployment session signing key, generated at build time
+.session-key

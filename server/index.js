@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path';
 
 import { migrate, Sessions, db, IS_EPHEMERAL } from './lib/db.js';
 import { attachUser, verifyOrigin } from './middleware.js';
+import { sessionInfo } from './lib/auth.js';
 import authRoutes from './routes/auth.js';
 import gameRoutes from './routes/games.js';
 import tasteRoutes from './routes/taste.js';
@@ -76,7 +77,12 @@ app.use('/api', tasteRoutes);
 app.use('/api', reviewRoutes);
 app.use('/api', hubRoutes);
 
-app.get('/api/health', (_req, res) => res.json({ ok: true, catalog: stats, uptime: process.uptime() }));
+app.get('/api/health', (_req, res) => res.json({
+  ok: true, catalog: stats, uptime: process.uptime(),
+  // Which session strategy is active, and where its signing key came from.
+  // If keySource is ever "dev-default" on a deployment, sessions are broken.
+  session: sessionInfo(),
+}));
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'not_found' }));
 

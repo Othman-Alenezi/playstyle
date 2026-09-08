@@ -9,13 +9,28 @@
  * wrote them would be dishonest, and every account it creates is named
  * `demo_*` with a shared password so it is obvious what they are.
  */
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { migrate, db, Users, Feedback, Reviews, Hubs, Posts } from './db.js';
 import { hashPassword } from './auth.js';
 import { byId } from './catalog.js';
 
 export const DEMO_PASSWORD = 'demo-account-not-for-production';
+
+/**
+ * Demo ids are derived from the username rather than random.
+ *
+ * On a serverless host every container seeds its own database. With random
+ * ids, demo_lorehound got a different id in each container, so a session
+ * cookie issued by one container referenced a user that did not exist in the
+ * next -- and the visitor was logged out on their next click. Deriving the id
+ * makes the seeded identities identical everywhere.
+ */
+function stableId(seed) {
+  const h = createHash('sha256').update(`playstyle-demo:${seed}`).digest('hex');
+  // Shape it as a UUID so it matches the format used for real accounts.
+  return [h.slice(0, 8), h.slice(8, 12), h.slice(12, 16), h.slice(16, 20), h.slice(20, 32)].join('-');
+}
 
 const PEOPLE = [
   { username: 'demo_tacticaldad',   loves: ['cs2', 'valorant', 'r6-siege'] },
@@ -355,7 +370,7 @@ export async function seedDemoData({ quiet = false } = {}) {
   const seedPeople = db.transaction(() => {
     for (const person of PEOPLE) {
       const existing = Users.byUsername(person.username);
-      const id = existing?.id ?? randomUUID();
+      const id = existing?.id ?? stableId(person.username);
       if (!existing) {
         Users.create({
           id, email: `${person.username}@demo.playstyle.local`,
@@ -378,7 +393,7 @@ export async function seedDemoData({ quiet = false } = {}) {
       const existing = Reviews.mine(user_id, game_id);
       const now = Date.now();
       Reviews.upsert({
-        id: existing?.id ?? randomUUID(),
+        id: existing?.id ?? stableId(`review:${username}:${game_id}`),
         user_id, game_id, verdict, body, hours,
         created_at: existing?.created_at ?? now, updated_at: now,
       });
@@ -394,7 +409,7 @@ export async function seedDemoData({ quiet = false } = {}) {
       // Idempotent: skip if this author already posted this title here.
       const already = Posts.forHub(franchise).find((p) => p.title === title);
       const now = Date.now();
-      const postId = already?.id ?? randomUUID();
+      const postId = already?.id ?? stableId(`post:${author}:${franchise}:${title}`);
       if (!already) {
         Posts.create({ id: postId, franchise, user_id, title, body, created_at: now, updated_at: now });
       }
@@ -405,12 +420,20 @@ export async function seedDemoData({ quiet = false } = {}) {
         const cid = ids.get(commenter);
         if (!cid) throw new Error(`comment by unknown demo user: ${commenter}`);
         if (!existing.has(text)) {
-          Posts.addComment({ id: randomUUID(), post_id: postId, user_id: cid, body: text, created_at: Date.now() });
+          Posts.addComment({
+            id: stableId(`comment:${commenter}:${postId}:${text.slice(0, 40)}`),
+            post_id: postId, user_id: cid, body: text, created_at: Date.now(),
+          });
         }
         Hubs.join(franchise, cid, Date.now());
       }
-      // A few upvotes so the "hot" ordering has something to sort.
-      for (const [, other] of ids) if (other !== user_id && Math.random() < 0.45) Posts.vote(postId, other);
+      // Derived, not random: two containers must agree on the vote counts or
+      // the same page shows different numbers depending on who serves it.
+      for (const [name, other] of ids) {
+        if (other === user_id) continue;
+        const draw = parseInt(createHash('sha256').update(`vote:${name}:${postId}`).digest('hex').slice(0, 4), 16);
+        if (draw % 100 < 45) Posts.vote(postId, other);
+      }
     }
   });
   seedHubs();

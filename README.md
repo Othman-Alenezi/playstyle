@@ -21,8 +21,35 @@ containers and a restart resets to the seeded demo content. `IS_EPHEMERAL` in
 For a persistent backend, run it as a normal process (Render, Railway, Fly, or
 a VPS) where the SQLite file survives, or swap `server/lib/db.js` for Postgres.
 
-Set `SESSION_SECRET` in the host's environment. Without it the app generates a
-per-container secret and warns; sessions then die on restart.
+### Sessions on a serverless host
+
+Two strategies, picked automatically (`SESSION_MODE` in `server/lib/auth.js`,
+reported by `/api/health`):
+
+- **database** (local, and any normal server): the cookie is an opaque random
+  token and the server stores only an HMAC of it, so sessions are revocable.
+- **stateless** (serverless): the identity is signed into the cookie, because
+  containers do not share a database and a session row written by one does not
+  exist in the next.
+
+Three separate things all had to be fixed before a deployed login would hold:
+
+1. The signing key was generated per process, so every container rejected the
+   others' cookies. It now comes from `SESSION_SECRET`, or from `.session-key`
+   written once at build time by `scripts/gen-session-key.mjs`.
+2. Sessions were database rows, which do not exist in a container that did not
+   issue them. Hence stateless mode.
+3. The demo seed used random UUIDs, so `demo_lorehound` had a different id in
+   every container and a valid cookie still pointed at a missing user. Seeded
+   ids are now derived from their names, so all containers agree.
+
+Set `SESSION_SECRET` for a real deployment; otherwise sessions end at each
+redeploy, when the build key is regenerated.
+
+**Accounts you register on the serverless demo still are not durable** -- the
+row is written to one container's `/tmp`. The pre-seeded `demo_*` accounts work
+everywhere because every container seeds them identically. For real accounts,
+run it as a normal process or move to Postgres.
 
 ## Running it
 
