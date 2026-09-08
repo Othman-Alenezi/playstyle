@@ -7,6 +7,23 @@ Front end is plain HTML/CSS/JS with no build step. Back end is Express + SQLite.
 
 ---
 
+**Live:** https://playstyle-9m6ywi141-coded14.vercel.app
+**Source:** https://github.com/Othman-Alenezi/playstyle
+
+## Deploying
+
+The deployment is a demo, not a production backend. SQLite lives on the
+serverless filesystem, so each container gets its own copy in `/tmp`: writes
+work within a container's lifetime, but two visitors may land on different
+containers and a restart resets to the seeded demo content. `IS_EPHEMERAL` in
+`server/lib/db.js` is what detects this and seeds the demo data at boot.
+
+For a persistent backend, run it as a normal process (Render, Railway, Fly, or
+a VPS) where the SQLite file survives, or swap `server/lib/db.js` for Postgres.
+
+Set `SESSION_SECRET` in the host's environment. Without it the app generates a
+per-container secret and warns; sessions then die on restart.
+
 ## Running it
 
 ```bash

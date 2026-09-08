@@ -1,5 +1,18 @@
 # Demo crib sheet
 
+## Which URL to use
+
+**Present from your laptop**, not the deployed site:
+
+```bash
+cd ~/code/playstyle && npm start
+```
+
+The Vercel deployment (https://playstyle-9m6ywi141-coded14.vercel.app) is a
+shareable link, not a reliable demo: each serverless container has its own
+database copy, so accounts and posts do not persist predictably. Local is a
+real persistent backend.
+
 ## Before you present
 
 ```bash
