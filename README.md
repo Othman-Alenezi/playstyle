@@ -7,7 +7,7 @@ Front end is plain HTML/CSS/JS with no build step. Back end is Express + SQLite.
 
 ---
 
-**Live:** https://playstyle-9m6ywi141-coded14.vercel.app
+**Live:** https://playstyle-coded14.vercel.app
 **Source:** https://github.com/Othman-Alenezi/playstyle
 
 ## Deploying
@@ -46,10 +46,23 @@ Three separate things all had to be fixed before a deployed login would hold:
 Set `SESSION_SECRET` for a real deployment; otherwise sessions end at each
 redeploy, when the build key is regenerated.
 
-**Accounts you register on the serverless demo still are not durable** -- the
-row is written to one container's `/tmp`. The pre-seeded `demo_*` accounts work
-everywhere because every container seeds them identically. For real accounts,
-run it as a normal process or move to Postgres.
+#### Accounts on the deployed demo
+
+Registering works, and the session then holds up wherever requests land: the
+signed cookie carries the account and the ratings behind the taste profile, so
+a container that has never seen the account rebuilds it, and containers
+reconcile their ratings against the cookie so the match list is the same
+everywhere.
+
+What still does not work there is **signing in again with the password**. The
+hash lives only in the container that handled the registration, and a rebuilt
+row is deliberately marked as unable to verify one -- signing in says so
+plainly, and signing up again reclaims the row rather than reporting the email
+as taken. In practice the 30-day cookie means there is rarely a reason to sign
+in again.
+
+Fixing that properly means shared storage, not a cookie: run the app as a
+normal process where SQLite persists, or move `server/lib/db.js` to Postgres.
 
 ## Running it
 

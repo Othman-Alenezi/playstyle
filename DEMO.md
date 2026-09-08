@@ -8,10 +8,14 @@
 cd ~/code/playstyle && npm start
 ```
 
-The Vercel deployment (https://playstyle-9m6ywi141-coded14.vercel.app) is a
-shareable link, not a reliable demo: each serverless container has its own
-database copy, so accounts and posts do not persist predictably. Local is a
-real persistent backend.
+The Vercel deployment is at **https://playstyle-coded14.vercel.app** (that URL
+is stable; the `playstyle-<hash>-coded14` ones change on every push).
+
+Signing up and browsing hold up there now. Two things still differ from local:
+signing in again with a password will not work for an account created on the
+deployment, and reviews or hub posts written there are visible only on the
+server that took them. Local is a real persistent backend, so present from
+local and treat the deployed link as something to share.
 
 ## Before you present
 
