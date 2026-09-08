@@ -81,7 +81,11 @@ export const hubBrief = (hub) => ({
   name: hub.name,
   tags: hub.tags,
   gameCount: hub.games.length,
-  games: hub.games.slice(0, 3).map((g) => ({ id: g.id, title: g.title, genres: g.genres, year: g.year })),
+  // `cover` has to survive this trim or the hub cards render as flat colour
+  // blocks instead of the games' artwork.
+  games: hub.games.slice(0, 3).map((g) => ({
+    id: g.id, title: g.title, genres: g.genres, year: g.year, cover: g.cover,
+  })),
 });
 
 /** Franchises represented in a set of game ids -- "your fandoms". */

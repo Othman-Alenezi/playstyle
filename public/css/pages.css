@@ -332,9 +332,17 @@
 }
 .hubcard:hover { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .hubcard__top { display: flex; gap: var(--s-3); align-items: flex-start; }
-.hubcard__covers { display: flex; gap: 3px; flex: none; }
-.hubcard__covers .cover { width: 34px; border-radius: 5px; }
-.hubcard__covers .cover__title { display: none; }
+.hubcard__covers { display: flex; flex: none; }
+.hubcard__covers .cover {
+  width: 52px; border-radius: 6px;
+  box-shadow: 0 2px 10px -2px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.1);
+}
+/* Overlap them like a small shelf of boxes. */
+.hubcard__covers .cover + .cover { margin-left: -18px; }
+.hubcard__covers .cover:nth-child(2) { z-index: 1; }
+.hubcard__covers .cover:nth-child(3) { z-index: 2; }
+.hubcard:hover .hubcard__covers .cover + .cover { margin-left: -10px; }
+.hubcard__covers .cover { transition: margin-left var(--base) var(--ease); }
 .hubcard__name { font-family: var(--font-display); font-weight: 700; font-size: var(--text-md); }
 .hubcard__name a:hover { color: var(--accent); }
 .hubcard__stats { font-size: var(--text-xs); color: var(--muted); margin-top: 2px; }
@@ -351,8 +359,9 @@
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
   font-size: var(--text-sm); transition: border-color var(--fast) var(--ease); }
 .hubhead__game:hover { border-color: var(--accent); }
-.hubhead__game .cover { width: 22px; border-radius: 4px; }
-.hubhead__game .cover__title, .hubhead__game .cover__year { display: none; }
+.hubhead__game { padding: var(--s-2) var(--s-3) var(--s-2) var(--s-2); }
+.hubhead__game .cover { width: 40px; border-radius: 5px; }
+.hubhead__game .cover__year { display: none; }
 
 .posts { display: grid; gap: var(--s-3); }
 .post { display: grid; grid-template-columns: 56px 1fr; gap: var(--s-3);
@@ -404,3 +413,32 @@
 .feature p { font-size: var(--text-sm); color: var(--muted); flex: 1; }
 .feature__link { font-size: var(--text-sm); font-weight: 600; color: var(--accent); margin-top: var(--s-2); }
 .feature__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ======================  editable game library  ======================== */
+.mygames { display: grid; gap: 2px; }
+.mygame {
+  display: flex; align-items: center; gap: var(--s-2);
+  padding: var(--s-2); border-radius: var(--r-sm);
+  transition: background var(--fast) var(--ease);
+}
+.mygame:hover { background: var(--surface-2); }
+.mygame__name { flex: 1; min-width: 0; font-size: var(--text-sm); font-weight: 500;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mygame__name:hover { color: var(--accent); }
+.mygame__signal {
+  font-size: 0.625rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
+  padding: 1px 5px; border-radius: var(--r-full); flex: none;
+  background: var(--surface-3); color: var(--muted);
+}
+.mygame__signal--love { background: var(--accent-2-soft); color: var(--accent-2); }
+.mygame__signal--meh { background: var(--danger-soft); color: var(--danger); }
+.mygame__remove {
+  flex: none; width: 22px; height: 22px; border-radius: 50%;
+  background: none; border: 1px solid transparent; color: var(--muted);
+  cursor: pointer; font-size: 1rem; line-height: 1;
+  display: grid; place-items: center;
+  transition: all var(--fast) var(--ease);
+}
+.mygame:hover .mygame__remove { border-color: var(--border); }
+.mygame__remove:hover { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
+.mygame__remove:disabled { opacity: .4; cursor: default; }

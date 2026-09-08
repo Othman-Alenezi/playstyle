@@ -18,6 +18,8 @@ let catalog = [];
 let selected = new Set(picks.get());
 let genre = 'all';
 let user = null;
+/** What the server already has, so we can tell additions from removals. */
+let savedLoves = new Set();
 
 /* ------------------------------- rendering -------------------------------- */
 
@@ -59,13 +61,24 @@ function toggle(id, btn) {
 
 function paintDock() {
   const n = selected.size;
+  const added = [...selected].filter((id) => !savedLoves.has(id)).length;
+  const removed = [...savedLoves].filter((id) => !selected.has(id)).length;
+  const changed = added + removed;
+
   render(dockCount, el('strong', { text: String(n) }),
-    n === 0 ? ' picked'
-    : n < MIN_PICKS ? ` picked — ${MIN_PICKS - n} more for a solid profile`
-    : ' picked');
-  dock.dataset.show = n > 0 ? 'true' : 'false';
-  dockGo.disabled = n < 1;
-  dockGo.textContent = !preview.hidden ? 'Update my matches'
+    user && changed
+      ? ` picked — ${added ? `${added} added` : ''}${added && removed ? ', ' : ''}${removed ? `${removed} removed` : ''}`
+      : n === 0 ? ' picked'
+      : n < MIN_PICKS ? ` picked — ${MIN_PICKS - n} more for a solid profile`
+      : ' picked');
+
+  // Signed in, the dock is always available: removing every pick is a valid
+  // change to save, so it must not disable the button.
+  dock.dataset.show = (n > 0 || (user && changed)) ? 'true' : 'false';
+  dockGo.disabled = user ? changed === 0 : n < 1;
+  dockGo.textContent = user
+    ? (changed ? 'Save my games' : 'Saved')
+    : !preview.hidden ? 'Update my matches'
     : n < MIN_PICKS && n > 0 ? `Show matches anyway (${n})`
     : 'Show my matches';
 }
@@ -134,6 +147,18 @@ async function boot() {
     onSignOut: async () => { await api.logout(); location.reload(); },
   }));
 
+  // Signed in: start from the games already in the profile, so this page can
+  // remove picks as well as add them. Without this the grid always looked
+  // empty and there was no way to take a game back out.
+  if (user) {
+    try {
+      const { library } = await api.profile();
+      savedLoves = new Set(library.filter((g) => g.signal === 'love').map((g) => g.id));
+      selected = new Set(savedLoves);
+      picks.set([...selected]);
+    } catch { /* fall back to whatever is in local storage */ }
+  }
+
   if (pickerResult.status === 'rejected') {
     render(grid, el('div', { class: 'empty' }, [
       el('p', { class: 'empty__body', text: 'Could not load the catalog.' }),
@@ -176,10 +201,29 @@ search.addEventListener('input', () => {
 });
 search.addEventListener('keydown', (e) => { if (e.key === 'Escape') { search.value = ''; paintGrid(); } });
 
-dockGo.addEventListener('click', showPreview);
+dockGo.addEventListener('click', async () => {
+  if (!user) return showPreview();
+  dockGo.dataset.loading = 'true';
+  try {
+    const res = await api.setLibrary([...selected]);
+    savedLoves = new Set(selected);
+    picks.clear();
+    paintDock();
+    toast(
+      res.added || res.removed
+        ? `Saved — ${res.added} added, ${res.removed} removed`
+        : 'Saved',
+      { actionLabel: 'See my matches', action: () => { location.href = '/app'; } },
+    );
+  } catch (err) {
+    toast(err.message, { error: true });
+  } finally {
+    delete dockGo.dataset.loading;
+  }
+});
 $('#dock-clear').addEventListener('click', () => {
   selected.clear();
-  picks.clear();
+  if (!user) picks.clear();
   preview.hidden = true;
   // Update the existing buttons rather than re-rendering the grid: replacing
   // the children loses the scroll anchor and throws the page back to the top.

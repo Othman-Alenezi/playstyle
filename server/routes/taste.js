@@ -38,6 +38,37 @@ router.post('/seed', requireAuth, (req, res) => {
   res.json({ ok: true, saved: ids.length });
 });
 
+/**
+ * Replace the set of games marked "love" with exactly the ids given.
+ *
+ * The taste quiz needs to remove picks as well as add them -- there was no way
+ * to take a game back out of a profile once it was in. Other signals
+ * (wishlist, played, not-for-me) are left alone, so re-running the quiz does
+ * not wipe ratings made from the feed.
+ */
+router.put('/library', requireAuth, (req, res) => {
+  const wanted = new Set(cleanIds(req.body?.gameIds));
+  const rows = Feedback.forUser(req.user.id);
+
+  let removed = 0;
+  for (const row of rows) {
+    if (row.signal === 'love' && !wanted.has(row.game_id)) {
+      Feedback.clear(req.user.id, row.game_id);
+      removed++;
+    }
+  }
+  const existing = new Set(rows.map((r) => r.game_id));
+  const added = [...wanted].filter((id) => !existing.has(id));
+  if (added.length) {
+    Feedback.setMany(req.user.id, added.map((gameId) => ({ gameId, signal: 'love' })), Date.now());
+  }
+  if (wanted.size) Users.markOnboarded(req.user.id);
+  refreshSession(res, req.user.id);
+
+  const now = Feedback.forUser(req.user.id);
+  res.json({ ok: true, added: added.length, removed, total: now.length, profile: tasteProfile(now) });
+});
+
 router.get('/profile', requireAuth, (req, res) => {
   const rows = Feedback.forUser(req.user.id);
   res.json({

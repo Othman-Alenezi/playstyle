@@ -54,7 +54,10 @@ export function hueOf(game) {
 
 export function cover(game, { year = true } = {}) {
   const node = el('div', { class: 'cover', style: { '--h': String(hueOf(game)) }, 'aria-hidden': 'true' }, [
-    el('span', { class: 'cover__title', text: game.title }),
+    el('span', { class: 'cover__plate' }, [
+      el('span', { class: 'cover__genre', text: game.genres?.[0] ?? '' }),
+      el('span', { class: 'cover__title', text: game.title }),
+    ]),
     year && game.year ? el('span', { class: 'cover__year', text: String(game.year) }) : null,
   ]);
 

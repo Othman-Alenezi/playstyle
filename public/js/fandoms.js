@@ -5,7 +5,11 @@ import { $, el, render, cover, navItems, skeletonRecs } from './ui.js';
 function hubCard(hub) {
   return el('article', { class: hub.joined ? 'hubcard hubcard--joined' : 'hubcard' }, [
     el('div', { class: 'hubcard__top' }, [
-      el('div', { class: 'hubcard__covers' }, hub.games.map((g) => cover(g, { year: false }))),
+      el('div', { class: 'hubcard__covers' }, hub.games.map((g) => {
+        const c = cover(g, { year: false });
+        c.classList.add('cover--mini');
+        return c;
+      })),
       el('div', {}, [
         el('h3', { class: 'hubcard__name' }, [
           el('a', { href: `/fandom/${encodeURIComponent(hub.slug)}`, text: hub.name }),

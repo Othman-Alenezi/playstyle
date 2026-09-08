@@ -28,13 +28,63 @@ const SIGNAL_COPY = {
 
 /* --------------------------------- render --------------------------------- */
 
+const SIGNAL_LABEL = { love: 'Love', wishlist: 'Wishlist', played: 'Played', meh: 'Not for me' };
+
 function paintProfile(profile) {
   render(bars, tasteBars(profile));
-  render(seeds, (profile?.seeds ?? []).map((s) =>
-    el('li', {}, [el('span', { class: 'chip chip--accent', text: s.title })])));
-  if (!profile?.seeds?.length) {
+}
+
+/**
+ * Every game in the profile, each removable. Previously this was a read-only
+ * list of chips, so a game could go into a profile and never come out.
+ */
+function paintLibrary(library) {
+  if (!library?.length) {
     render(seeds, el('li', {}, [el('span', { class: 'rec__sub', text: 'Nothing yet.' })]));
+    return;
   }
+  render(seeds, library.map((g) => el('li', { class: 'mygame' }, [
+    el('a', { class: 'mygame__name', href: `/game/${encodeURIComponent(g.id)}`, text: g.title }),
+    el('span', { class: `mygame__signal mygame__signal--${g.signal}`, text: SIGNAL_LABEL[g.signal] ?? g.signal }),
+    el('button', {
+      class: 'mygame__remove', type: 'button',
+      'aria-label': `Remove ${g.title} from your games`, title: 'Remove',
+      text: '×',
+      onclick: (e) => removeGame(g, e.currentTarget),
+    }),
+  ])));
+}
+
+/** Take a game back out of the profile, with an undo. */
+async function removeGame(game, button) {
+  button.disabled = true;
+  const previousSignal = game.signal;
+  try {
+    await api.clearFeedback(game.id);
+    await refreshProfile();
+    await load({ showSkeleton: false });
+    toast(`Removed ${game.title}`, {
+      actionLabel: 'Undo',
+      action: async () => {
+        try {
+          await api.feedback(game.id, previousSignal);
+          await refreshProfile();
+          await load({ showSkeleton: false });
+        } catch (err) { toast(err.message, { error: true }); }
+      },
+    });
+  } catch (err) {
+    button.disabled = false;
+    toast(err.message, { error: true });
+  }
+}
+
+async function refreshProfile() {
+  try {
+    const { profile, library } = await api.profile();
+    paintProfile(profile);
+    paintLibrary(library);
+  } catch { /* the feed still works without the sidebar refreshing */ }
 }
 
 function paintFeed() {
@@ -67,8 +117,7 @@ async function rate(signal, item, button) {
       await api.clearFeedback(item.id);
       items.splice(Math.min(index, items.length), 0, item);
       paintFeed();
-      const { profile } = await api.profile();
-      paintProfile(profile);
+      await refreshProfile();
     } catch (err) {
       toast(err.message, { error: true });
     }
@@ -77,6 +126,7 @@ async function rate(signal, item, button) {
   try {
     const { profile } = await api.feedback(item.id, signal);
     paintProfile(profile);
+    refreshProfile();
     toast(SIGNAL_COPY[signal], { action: undo, actionLabel: 'Undo', duration: 4500 });
   } catch (err) {
     // The write failed, so put the card back rather than lying about it.
@@ -97,7 +147,7 @@ function keyboardShortcuts(event) {
   if (first) { event.preventDefault(); first.click(); }
 }
 
-async function load({ showSkeleton = true } = {}) {
+async function load({ showSkeleton = true, skipLibrary = false } = {}) {
   if (showSkeleton) {
     feed.setAttribute('aria-busy', 'true');
     render(feed, skeletonRecs(4));
@@ -112,6 +162,7 @@ async function load({ showSkeleton = true } = {}) {
     items = data.items;
     paintFeed();
     paintProfile(data.profile);
+    if (!skipLibrary) await refreshProfile();
     // Only mention the keyboard shortcut where there is a keyboard to use.
     $('#feed-sub').textContent = items.length
       ? `${items.length} games matched to your profile. `

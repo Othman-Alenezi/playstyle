@@ -50,6 +50,7 @@ export const api = {
   picker: () => api.get('/api/games/picker'),
   preview: (gameIds, limit = 3) => api.post('/api/preview', { gameIds, limit }),
   seed: (gameIds) => api.post('/api/seed', { gameIds }),
+  setLibrary: (gameIds) => request('PUT', '/api/library', { gameIds }),
   recommendations: (limit = 12) => api.get(`/api/recommendations?limit=${limit}`),
   profile: () => api.get('/api/profile'),
   feedback: (gameId, signal) => api.post('/api/feedback', { gameId, signal }),
