@@ -73,11 +73,27 @@ npm run db:demo     # optional: demo accounts + reviews, for development only
 npm start           # http://localhost:3000
 ```
 
-`npm run db:demo` creates ten `demo_*` accounts with deliberately different
-tastes and 32 reviews between them, so the taste-match feature can be seen
-before there are real users. It is development scaffolding, not launch content —
-**do not run it against production.** Every account shares the password printed
-by the script.
+`npm run db:demo` creates 48 `demo_*` accounts and 456 reviews, so the
+taste-match feature can be seen before there are real users. It is development
+scaffolding, not launch content — **do not run it against production.** Every
+account shares the password printed by the script.
+
+The reviewers are deliberately arranged in **taste clusters of three or more**
+(several soulslike players, several Call of Duty players, several cozy
+players, and so on). That is not decoration: "players with your taste" needs
+three reviewers above the match floor before it will show a number, so with
+one reviewer per taste the feature was invisible on all but a single game.
+Reviews are also written for what each cluster gets *recommended* rather than
+what it already loves, since a game you have rated is excluded from your own
+recommendations.
+
+Measured across twelve taste profiles: 88% of recommended games have reviews
+and the taste-matched card appears on 51% of them.
+
+`npm run covers` fetches artwork from Steam; `node scripts/fetch-missing-covers.mjs`
+is a second pass against Wikipedia for the titles Steam does not carry
+(console exclusives, Valorant, Fortnite). Together they cover 132 of 148. The
+rest fall back to a generated typographic cover.
 
 `npm run dev` restarts on file changes. `npm run db:reset` wipes the database and
 recreates the schema.

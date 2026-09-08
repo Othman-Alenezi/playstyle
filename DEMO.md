@@ -72,6 +72,10 @@ bcrypt, session token in an httpOnly cookie, login rate-limited.
 once: the card animates out, and the taste profile bars on the right reorder.
 Then click **Undo** in the toast.
 
+The sidebar lists every game in your profile with a **×** to remove it, and
+the taste quiz on the home page loads what you already have, so picks can be
+taken back out as well as added.
+
 > "Every rating retrains the profile. The bars are the model, visible."
 
 **5. Click a game title → the detail page.** This is the bit to spend time on.
@@ -87,7 +91,7 @@ Open **Elden Ring**. Point at the two summary cards:
 Each review shows the reviewer's taste — *"Loves Elden Ring, Dark Souls III,
 Bloodborne"* — so you can judge how much their verdict should count.
 
-**6. Fandoms → Call of Duty.** The hub holds all three CoD games. Posts show
+**6. Fandoms → Call of Duty.** The hub covers all three Call of Duty games. The hub holds all three CoD games. Posts show
 the author's taste match too. Upvote something, expand a comment thread, post
 a reply.
 
