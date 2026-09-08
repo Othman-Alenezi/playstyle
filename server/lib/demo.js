@@ -10,6 +10,7 @@
  * `demo_*` with a shared password so it is obvious what they are.
  */
 import { randomUUID } from 'node:crypto';
+import { pathToFileURL } from 'node:url';
 import { migrate, db, Users, Feedback, Reviews, Hubs, Posts } from './db.js';
 import { hashPassword } from './auth.js';
 import { byId } from './catalog.js';
@@ -341,8 +342,9 @@ const POSTS = [
     ['demo_gridline', 'Behemoths were a terrible idea and I miss them enormously.']]],
 ];
 
-async function run() {
+export async function seedDemoData({ quiet = false } = {}) {
   migrate();
+  const log = quiet ? () => {} : console.log;
 
   const missing = REVIEWS.filter(([, gameId]) => !byId.has(gameId)).map(([, g]) => g);
   if (missing.length) throw new Error(`demo reviews reference unknown games: ${[...new Set(missing)].join(', ')}`);
@@ -415,10 +417,14 @@ async function run() {
 
   const games = new Set(REVIEWS.map(([, g]) => g));
   const hubSlugs = new Set(POSTS.map(([, f]) => f));
-  console.log(`Demo data ready: ${PEOPLE.length} accounts, ${REVIEWS.length} reviews across ${games.size} games,`
+  log(`Demo data ready: ${PEOPLE.length} accounts, ${REVIEWS.length} reviews across ${games.size} games,`
     + ` ${POSTS.length} hub posts across ${hubSlugs.size} fandoms.`);
-  console.log(`Sign in as any of them with password: ${DEMO_PASSWORD}`);
-  console.log('Games with reviews:', [...games].join(', '));
+  log(`Sign in as any of them with password: ${DEMO_PASSWORD}`);
+  log('Games with reviews:', [...games].join(', '));
+  return { accounts: PEOPLE.length, reviews: REVIEWS.length, posts: POSTS.length };
 }
 
-run().catch((err) => { console.error(err.message); process.exit(1); });
+// Only run as a CLI when invoked directly.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  seedDemoData().catch((err) => { console.error(err.message); process.exit(1); });
+}

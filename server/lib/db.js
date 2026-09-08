@@ -5,9 +5,34 @@
 import Database from 'better-sqlite3';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { existsSync, copyFileSync } from 'node:fs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const DB_PATH = join(here, '..', '..', 'data', 'playstyle.db');
+const DATA = join(here, '..', '..', 'data');
+
+/**
+ * Where the database lives.
+ *
+ * Normally it is a file in data/. On a serverless host the project directory
+ * is read-only, so we copy the committed seed database into /tmp and work
+ * there instead. That makes the deployed site fully interactive -- but only
+ * for as long as that container lives, because /tmp is not shared between
+ * containers and is discarded when one is recycled. Writes on the deployed
+ * demo are therefore real but not durable; see README "Deploying".
+ */
+const SEED = join(DATA, 'seed.db');
+const SERVERLESS = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+
+function resolveDbPath() {
+  if (process.env.DB_PATH) return process.env.DB_PATH;
+  if (!SERVERLESS) return join(DATA, 'playstyle.db');
+  const tmp = '/tmp/playstyle.db';
+  if (!existsSync(tmp) && existsSync(SEED)) copyFileSync(SEED, tmp);
+  return tmp;
+}
+
+export const DB_PATH = resolveDbPath();
+export const IS_EPHEMERAL = SERVERLESS;
 
 export const db = new Database(DB_PATH);
 

@@ -13,13 +13,14 @@
  * The images are copyrighted promotional art, downloaded for local use in a
  * student project. They are gitignored.
  */
-import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(here, '..', '..');
 const OUT = join(ROOT, 'public', 'covers');
+const MANIFEST = join(ROOT, 'data', 'covers.json');
 const SEARCH = 'https://store.steampowered.com/api/storesearch/';
 const CDN = 'https://cdn.cloudflare.steamstatic.com/steam/apps';
 
@@ -146,6 +147,22 @@ async function run() {
   const games = JSON.parse(readFileSync(join(ROOT, 'data', 'games.json'), 'utf8'));
   mkdirSync(OUT, { recursive: true });
   const already = new Set(readdirSync(OUT).filter((f) => f.endsWith('.jpg')).map((f) => f.slice(0, -4)));
+
+  // --manifest-only maps ids for art that is already downloaded, so a
+  // deployment can point at Steam's CDN without re-fetching every file.
+  if (process.argv.includes('--manifest-only')) {
+    const manifest = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : {};
+    const need = games.filter((g) => already.has(g.id) && !manifest[g.id]);
+    console.log(`Mapping ${need.length} already-downloaded covers to Steam ids…`);
+    await pool(need, 4, async (g) => {
+      const match = await findAppId(g.title, g.id);
+      if (match) { manifest[g.id] = { appid: match.appid, variant: 'library_600x900_2x.jpg' }; process.stdout.write('.'); }
+      else process.stdout.write('-');
+    });
+    writeFileSync(MANIFEST, JSON.stringify(manifest, null, 0));
+    console.log(`\n${Object.keys(manifest).length} games mapped in data/covers.json`);
+    return;
+  }
 
   const todo = games.filter((g) => !already.has(g.id));
   console.log(`${already.size} already downloaded, ${todo.length} to look up.\n`);

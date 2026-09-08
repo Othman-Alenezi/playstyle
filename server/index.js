@@ -1,10 +1,10 @@
 import express from 'express';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 
-import { migrate, Sessions } from './lib/db.js';
+import { migrate, Sessions, db, IS_EPHEMERAL } from './lib/db.js';
 import { attachUser, verifyOrigin } from './middleware.js';
 import authRoutes from './routes/auth.js';
 import gameRoutes from './routes/games.js';
@@ -25,6 +25,21 @@ const catalogHas = (id) => byId.has(id);
 
 migrate();
 
+/**
+ * On an ephemeral filesystem the database is empty on every cold start, so
+ * populate it with the demo content rather than showing an empty site. Local
+ * runs are untouched: there the database persists and is seeded explicitly
+ * with `npm run db:demo`.
+ */
+if (IS_EPHEMERAL) {
+  const { n } = db.prepare('SELECT COUNT(*) AS n FROM users').get();
+  if (n === 0) {
+    const { seedDemoData } = await import('./lib/demo.js');
+    await seedDemoData({ quiet: true });
+    console.log('[boot] ephemeral filesystem detected: demo data seeded');
+  }
+}
+
 const app = express();
 app.set('trust proxy', PROD ? 1 : false); // req.ip must be real for rate limiting
 app.disable('x-powered-by');
@@ -36,7 +51,8 @@ app.use(helmet({
       scriptSrc: ["'self'"],                   // no inline scripts anywhere in this app
       styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-      imgSrc: ["'self'", 'data:'],
+      // Cover art falls back to Steam's CDN when it is not on disk.
+      imgSrc: ["'self'", 'data:', 'https://cdn.cloudflare.steamstatic.com'],
       connectSrc: ["'self'"],
       objectSrc: ["'none'"],
       frameAncestors: ["'none'"],
@@ -105,10 +121,17 @@ setInterval(() => {
   if (n) console.log(`[sessions] purged ${n} expired`);
 }, 60 * 60e3).unref();
 
-const server = app.listen(PORT, () => {
-  console.log(`Playstyle running on http://localhost:${PORT}  (${stats.games} games, ${stats.features} tags)`);
-});
+export default app;
 
-for (const sig of ['SIGINT', 'SIGTERM']) {
-  process.on(sig, () => { server.close(() => process.exit(0)); });
+/**
+ * Only listen when this file is the process entry point. Under a serverless
+ * host the platform imports `app` and handles the socket itself.
+ */
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const server = app.listen(PORT, () => {
+    console.log(`Playstyle running on http://localhost:${PORT}  (${stats.games} games, ${stats.features} tags)`);
+  });
+  for (const sig of ['SIGINT', 'SIGTERM']) {
+    process.on(sig, () => { server.close(() => process.exit(0)); });
+  }
 }

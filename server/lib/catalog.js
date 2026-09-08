@@ -73,11 +73,29 @@ const withArt = new Set(
     : [],
 );
 
+/**
+ * The art is 21 MB of copyrighted promotional images, so it is not committed.
+ * data/covers.json records which Steam app each game maps to, letting a
+ * deployment that has no local files fall back to Steam's own CDN.
+ */
+const MANIFEST_PATH = join(here, '..', '..', 'data', 'covers.json');
+const manifest = existsSync(MANIFEST_PATH)
+  ? JSON.parse(readFileSync(MANIFEST_PATH, 'utf8'))
+  : {};
+const STEAM_CDN = 'https://cdn.cloudflare.steamstatic.com/steam/apps';
+
+function coverUrl(id) {
+  if (withArt.has(id)) return `/covers/${id}.jpg`;
+  const entry = manifest[id];
+  if (entry) return `${STEAM_CDN}/${entry.appid}/${entry.variant || 'library_600x900.jpg'}`;
+  return null;
+}
+
 /** Strip the vector before sending a game over the wire. */
 export const publicGame = (g) => ({
   id: g.id, title: g.title, year: g.year, franchise: g.franchise,
   rating: g.rating, genres: g.genres, tags: g.tags, blurb: g.blurb,
-  cover: withArt.has(g.id) ? `/covers/${g.id}.jpg` : null,
+  cover: coverUrl(g.id),
 });
 
 /* --------------------------------- similarity ------------------------------ */
@@ -134,4 +152,7 @@ export function pickerGrid(size = 42) {
   return chosen.slice(0, size);
 }
 
-export const stats = { games: N, features: df.size, covers: withArt.size };
+export const stats = {
+  games: N, features: df.size,
+  covers: withArt.size, coversViaCdn: Object.keys(manifest).length,
+};
