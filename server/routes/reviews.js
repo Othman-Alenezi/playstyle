@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import { Feedback, Reviews, REPORT_THRESHOLD } from '../lib/db.js';
-import { byId } from '../lib/catalog.js';
+import { byId, publicGame } from '../lib/catalog.js';
 import { matchBetween, tasteSummary, verdictSplit } from '../lib/recommend.js';
 import { requireAuth, rateLimit } from '../middleware.js';
 import { validateReview, REPORT_REASONS } from '../lib/validate-review.js';
@@ -19,6 +19,31 @@ const SORTS = {
   helpful: (a, b) => b.helpfulYes - a.helpfulYes || (b.tasteMatch ?? -1) - (a.tasteMatch ?? -1),
   new: (a, b) => b.updatedAt - a.updatedAt,
 };
+
+/**
+ * A handful of well-reviewed games, for the landing page to point at.
+ *
+ * The feature was previously advertised with a hard-coded link to one game,
+ * so every visitor who clicked "reviews from players like you" landed on
+ * Elden Ring and reasonably concluded that was the only game with reviews.
+ */
+router.get('/reviews/highlights', (req, res) => {
+  const limit = Math.min(Math.max(Number(req.query.limit) || 6, 1), 12);
+  const rows = Reviews.counts(3);
+  const items = [];
+  for (const row of rows) {
+    const game = byId.get(row.game_id);
+    if (!game) continue;
+    items.push({
+      ...publicGame(game),
+      reviewCount: row.n,
+      recommend: Math.round((row.yes / row.n) * 100),
+    });
+    if (items.length >= limit) break;
+  }
+  res.set('Cache-Control', 'public, max-age=120');
+  res.json({ items, reviewedGames: rows.length });
+});
 
 /**
  * Reviews for one game, each annotated with how closely that reviewer's taste

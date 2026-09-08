@@ -442,3 +442,13 @@
 .mygame:hover .mygame__remove { border-color: var(--border); }
 .mygame__remove:hover { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
 .mygame__remove:disabled { opacity: .4; cursor: default; }
+
+/* A row of real games inside the reviews feature card, so the front page
+   advertises breadth instead of linking at one hard-coded game. */
+.feature__games { display: flex; gap: 6px; margin-top: var(--s-2); }
+.feature__game { flex: 0 0 40px; border-radius: 6px; transition: transform var(--fast) var(--ease); }
+.feature__game:hover { transform: translateY(-3px); }
+.feature__game .cover {
+  border-radius: 6px;
+  box-shadow: 0 2px 8px -2px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.1);
+}

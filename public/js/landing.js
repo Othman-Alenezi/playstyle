@@ -190,6 +190,37 @@ async function boot() {
 
   paintGrid();
   paintDock();
+  paintReviewHighlights();
+}
+
+/**
+ * Fill the reviews feature card with real games. Silent if it fails -- it is
+ * decoration on the landing page, not something worth an error state.
+ */
+async function paintReviewHighlights() {
+  const host = $('#review-highlights');
+  if (!host) return;
+  try {
+    const { items, reviewedGames } = await api.reviewHighlights(5);
+    if (!items.length) return;
+    render(host, items.map((g) => {
+      const art = cover(g, { year: false });
+      art.classList.add('cover--mini');
+      // These sit above the fold and are 40px wide; lazy-loading them just
+      // meant the row appeared half-empty on arrival.
+      art.querySelector('img')?.setAttribute('loading', 'eager');
+      return el('a', {
+        class: 'feature__game', href: `/game/${encodeURIComponent(g.id)}`,
+        title: `${g.title} — ${g.reviewCount} reviews, ${g.recommend}% recommend`,
+        'aria-label': `${g.title}: ${g.reviewCount} reviews`,
+      }, [art]);
+    }));
+    const link = $('#review-highlights-link');
+    if (link && reviewedGames) {
+      link.textContent = `See all ${reviewedGames} games with reviews →`;
+      link.href = `/game/${encodeURIComponent(items[0].id)}`;
+    }
+  } catch { /* leave the card as written */ }
 }
 
 /* ------------------------------- listeners -------------------------------- */

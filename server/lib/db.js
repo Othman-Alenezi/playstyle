@@ -197,6 +197,15 @@ const q = {
       GROUP BY r.id
       ORDER BY r.updated_at DESC`),
   reviewById: () => db.prepare(`SELECT * FROM reviews WHERE id = ?`),
+  reviewCounts: () => db.prepare(
+    `SELECT game_id,
+            COUNT(*) AS n,
+            SUM(CASE WHEN verdict = 'recommend' THEN 1 ELSE 0 END) AS yes
+       FROM reviews
+      WHERE hidden = 0
+      GROUP BY game_id
+      HAVING n >= ?
+      ORDER BY n DESC`),
   reviewByUserGame: () => db.prepare(`SELECT * FROM reviews WHERE user_id = ? AND game_id = ?`),
   deleteReview: () => db.prepare(`DELETE FROM reviews WHERE id = ? AND user_id = ?`),
   myVotes: () => db.prepare(
@@ -340,6 +349,8 @@ export const Reviews = {
   upsert: (row) => stmt('upsertReview').run(row),
   forGame: (gameId) => stmt('reviewsForGame').all(gameId),
   byId: (id) => stmt('reviewById').get(id),
+  /** Games with at least `min` reviews, most-reviewed first. */
+  counts: (min = 1) => stmt('reviewCounts').all(min),
   mine: (userId, gameId) => stmt('reviewByUserGame').get(userId, gameId),
   remove: (id, userId) => stmt('deleteReview').run(id, userId).changes,
 

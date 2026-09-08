@@ -57,6 +57,7 @@ export const api = {
   clearFeedback: (gameId) => api.del(`/api/feedback/${encodeURIComponent(gameId)}`),
 
   game: (id) => api.get(`/api/games/${encodeURIComponent(id)}`),
+  reviewHighlights: (limit = 6) => api.get(`/api/reviews/highlights?limit=${limit}`),
   reviews: (id, sort) => api.get(`/api/games/${encodeURIComponent(id)}/reviews`
     + (sort ? `?sort=${encodeURIComponent(sort)}` : '')),
   postReview: (id, payload) => api.post(`/api/games/${encodeURIComponent(id)}/reviews`, payload),
