@@ -3,6 +3,7 @@ import { Feedback, Users } from '../lib/db.js';
 import { byId, publicGame } from '../lib/catalog.js';
 import { recommend, tasteProfile, SIGNAL_WEIGHT } from '../lib/recommend.js';
 import { requireAuth } from '../middleware.js';
+import { refreshSession } from '../lib/auth.js';
 
 const router = Router();
 const SIGNALS = Object.keys(SIGNAL_WEIGHT);
@@ -31,6 +32,9 @@ router.post('/seed', requireAuth, (req, res) => {
   if (!ids.length) return res.status(400).json({ error: 'need_picks', message: 'Pick at least one game.' });
   Feedback.setMany(req.user.id, ids.map((gameId) => ({ gameId, signal: 'love' })), Date.now());
   Users.markOnboarded(req.user.id);
+  // Keep the ratings carried in the session cookie in step with the database,
+  // so a container that has to rebuild this account rebuilds it complete.
+  refreshSession(res, req.user.id);
   res.json({ ok: true, saved: ids.length });
 });
 
@@ -60,6 +64,7 @@ router.post('/feedback', requireAuth, (req, res) => {
     return res.status(400).json({ error: 'bad_signal', message: `signal must be one of ${SIGNALS.join(', ')}` });
   }
   Feedback.set(req.user.id, gameId, signal);
+  refreshSession(res, req.user.id);
   const rows = Feedback.forUser(req.user.id);
   // Return the refreshed profile so the client can update the taste bars in
   // the same round trip -- one request per interaction, no refetch.
@@ -68,6 +73,7 @@ router.post('/feedback', requireAuth, (req, res) => {
 
 router.delete('/feedback/:gameId', requireAuth, (req, res) => {
   Feedback.clear(req.user.id, req.params.gameId);
+  refreshSession(res, req.user.id);
   res.json({ ok: true, profile: tasteProfile(Feedback.forUser(req.user.id)) });
 });
 
