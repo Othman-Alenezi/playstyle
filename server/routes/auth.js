@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import { Users, Feedback } from '../lib/db.js';
-import { hashPassword, checkPassword, startSession, endSession, publicUser, COOKIE } from '../lib/auth.js';
+import {
+  hashPassword, checkPassword, startSession, endSession, publicUser, COOKIE,
+  isRebuiltAccount,
+} from '../lib/auth.js';
 import { validateSignup, validateLogin } from '../lib/validate.js';
 import { rateLimit, requireAuth } from '../middleware.js';
 import { byId } from '../lib/catalog.js';
@@ -38,11 +41,19 @@ router.post('/signup', signupLimit, async (req, res, next) => {
 
     // This does confirm an email is registered. That is a deliberate trade:
     // without it, "account already exists" becomes an unexplained failure.
-    if (Users.byEmail(value.email)) {
+    const existingByEmail = Users.byEmail(value.email);
+    if (existingByEmail && !isRebuiltAccount(existingByEmail)) {
       return res.status(409).json({ error: 'email_taken', fields: { email: 'That email already has an account.' } });
     }
-    if (Users.byUsername(value.username)) {
+    const existingByName = Users.byUsername(value.username);
+    if (existingByName && !isRebuiltAccount(existingByName)) {
       return res.status(409).json({ error: 'username_taken', fields: { username: 'That username is taken.' } });
+    }
+    // A rebuilt row holds no password anyone can use, so let the person who
+    // owns the address claim it rather than locking them out of their own
+    // email. Only reachable on a host where accounts get rebuilt from a cookie.
+    for (const stale of [existingByEmail, existingByName]) {
+      if (stale && isRebuiltAccount(stale)) Users.destroy(stale.id);
     }
 
     const user = {
@@ -65,6 +76,18 @@ router.post('/login', loginLimit, async (req, res, next) => {
     if (Object.keys(errors).length) return res.status(400).json({ error: 'invalid', fields: errors });
 
     const user = Users.byEmail(value.email);
+
+    // A rebuilt account cannot verify a password here. Say so plainly rather
+    // than returning "incorrect password" for a password that is correct.
+    if (user && isRebuiltAccount(user)) {
+      return res.status(409).json({
+        error: 'rebuilt_account',
+        message: 'This account was created on the live demo, where each server keeps its own '
+          + 'copy of the data, so its password cannot be checked here. You usually stay signed '
+          + 'in without logging in again. Otherwise sign up again, or use a demo account.',
+      });
+    }
+
     // Always run a comparison so a missing account and a wrong password take
     // the same amount of time and return the same message.
     const ok = user

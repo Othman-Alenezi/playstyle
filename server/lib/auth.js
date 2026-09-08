@@ -117,10 +117,19 @@ function buildPayload(userId, expiresAt) {
   };
 }
 
-/** A placeholder hash, computed once, that no password can ever match. */
+/**
+ * Marker for a rebuilt account. The real password hash lives in whichever
+ * container handled the signup, so this row cannot verify a password -- but it
+ * must be recognisable, or the account silently becomes one that can neither
+ * be signed into nor registered again.
+ */
+export const REBUILT_MARKER = 'rebuilt:';
+export const isRebuiltAccount = (user) =>
+  typeof user?.password_hash === 'string' && user.password_hash.startsWith(REBUILT_MARKER);
+
 let unusableHash = null;
 const getUnusableHash = () => {
-  unusableHash ??= bcrypt.hashSync(randomBytes(24).toString('hex'), 10);
+  unusableHash ??= REBUILT_MARKER + bcrypt.hashSync(randomBytes(24).toString('hex'), 10);
   return unusableHash;
 };
 
