@@ -7,10 +7,22 @@ const BCRYPT_ROUNDS = 12;
 const SESSION_DAYS = 30;
 export const COOKIE = 'ps_session';
 
-const SECRET = process.env.SESSION_SECRET || 'dev-only-insecure-secret';
-if (process.env.NODE_ENV === 'production' && SECRET === 'dev-only-insecure-secret') {
+const EPHEMERAL_HOST = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+
+function resolveSecret() {
+  if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
+  if (process.env.NODE_ENV !== 'production') return 'dev-only-insecure-secret';
+  if (EPHEMERAL_HOST) {
+    // Generating one keeps the demo deployment working instead of crashing.
+    // Sessions then die whenever the container is recycled -- which is
+    // already true of the database on this kind of host.
+    console.warn('[auth] SESSION_SECRET is not set. Using a generated per-container '
+      + 'secret: sessions will not survive a restart. Set SESSION_SECRET for a real deployment.');
+    return randomBytes(32).toString('hex');
+  }
   throw new Error('SESSION_SECRET must be set in production. See .env.example');
 }
+const SECRET = resolveSecret();
 
 /**
  * Sessions are stored as an HMAC of the token, never the token itself, so a

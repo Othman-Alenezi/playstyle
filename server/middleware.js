@@ -21,10 +21,20 @@ export function verifyOrigin(allowed) {
   return (req, res, next) => {
     if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
     const origin = req.get('origin');
-    if (origin && !set.has(origin)) {
-      return res.status(403).json({ error: 'bad_origin', message: 'Request blocked.' });
+    if (!origin) return next();
+
+    // Same-origin is always allowed. Without this a deployment would reject
+    // every write from its own domain unless ALLOWED_ORIGINS happened to
+    // list it, which is a silent 403 on signup, login and posting.
+    const host = req.get('host');
+    if (host) {
+      for (const scheme of ['https://', 'http://']) {
+        if (origin === scheme + host) return next();
+      }
     }
-    next();
+    if (set.has(origin)) return next();
+
+    return res.status(403).json({ error: 'bad_origin', message: 'Request blocked.' });
   };
 }
 
