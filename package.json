@@ -1,0 +1,28 @@
+{
+  "name": "playstyle",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Game recommendations from your taste profile, with reviews from players who share it.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "dev": "node --watch --env-file-if-exists=.env server/index.js",
+    "db:seed": "node server/lib/seed.js",
+    "db:reset": "rm -f data/playstyle.db data/playstyle.db-wal data/playstyle.db-shm && node server/lib/seed.js",
+    "db:demo": "node server/lib/demo.js",
+    "covers": "node server/lib/fetch-covers.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^12.11.1",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0"
+  },
+  "allowScripts": {
+    "better-sqlite3@12.11.1": true
+  }
+}

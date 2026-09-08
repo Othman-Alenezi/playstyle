@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "playstyle",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "PATH=$HOME/.local/node/bin:$PATH exec node server/index.js"],
+      "port": 3000
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description" content="Your Playstyle recommendations." />
+  <meta name="robots" content="noindex" />
+  <title>My matches — Playstyle</title>
+  <script src="/js/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="header__inner">
+      <a class="logo" href="/" aria-label="Playstyle home">
+        <span class="logo__mark"></span><span>Playstyle</span>
+      </a>
+      <div class="header__spacer"></div>
+      <nav class="header__nav" id="site-nav"></nav>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <div class="app-layout">
+      <div>
+        <div class="section-head">
+          <div>
+            <h1 id="feed-title" class="feed__title">Your matches</h1>
+            <p id="feed-sub">Rate anything here and the list rearranges itself.</p>
+          </div>
+          <button class="btn" type="button" id="refresh">Refresh list</button>
+        </div>
+        <div id="feed" aria-live="polite" aria-busy="true"></div>
+      </div>
+
+      <aside class="sidebar" aria-label="Your taste profile">
+        <div class="sidebar__card">
+          <h2 class="sidebar__title">Your taste profile</h2>
+          <div class="bars" id="bars"></div>
+        </div>
+        <div class="sidebar__card">
+          <h2 class="sidebar__title">Built from</h2>
+          <ul class="seeds" id="seeds"></ul>
+          <p class="sidebar__more">
+            <a class="btn btn--ghost" href="/">Add more games →</a>
+          </p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module" src="/js/feed.js"></script>
+</body>
+</html>

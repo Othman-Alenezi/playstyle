@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description" content="Sign in to Playstyle, or create a free account to save your taste profile." />
+  <meta name="robots" content="noindex" />
+  <title>Sign in — Playstyle</title>
+  <script src="/js/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="header__inner">
+      <a class="logo" href="/" aria-label="Playstyle home">
+        <span class="logo__mark"></span><span>Playstyle</span>
+      </a>
+      <div class="header__spacer"></div>
+      <nav class="header__nav" id="site-nav"></nav>
+    </div>
+  </header>
+
+  <main id="main" class="auth">
+    <div class="auth__form-side">
+      <div class="auth__box">
+        <div class="segmented" role="tablist" aria-label="Sign in or create an account">
+          <button class="segmented__btn" type="button" role="tab" id="tab-login"
+                  aria-selected="true" aria-controls="auth-form">Sign in</button>
+          <button class="segmented__btn" type="button" role="tab" id="tab-signup"
+                  aria-selected="false" aria-controls="auth-form">Create account</button>
+        </div>
+
+        <h1 class="auth__title" id="auth-title">Welcome back</h1>
+        <p class="auth__lead" id="auth-lead">Sign in to pick up where your profile left off.</p>
+
+        <p class="form__error" id="form-error" role="alert"></p>
+
+        <form id="auth-form" novalidate>
+          <div class="field">
+            <label class="field__label" for="email">Email</label>
+            <div class="field__wrap">
+              <input class="input" id="email" name="email" type="email" inputmode="email"
+                     autocomplete="email" required aria-describedby="email-error" placeholder="you@example.com" />
+            </div>
+            <span class="field__error" id="email-error" aria-live="polite"></span>
+          </div>
+
+          <div class="field" id="username-field" hidden>
+            <label class="field__label" for="username">
+              <span>Username</span>
+              <span class="field__hint">Shown on your reviews</span>
+            </label>
+            <div class="field__wrap">
+              <input class="input" id="username" name="username" type="text"
+                     autocomplete="username" maxlength="20" aria-describedby="username-error" placeholder="nightowl_92" />
+            </div>
+            <span class="field__error" id="username-error" aria-live="polite"></span>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="password">
+              <span>Password</span>
+              <span class="field__hint" id="password-hint" hidden>8 characters minimum</span>
+            </label>
+            <div class="field__wrap">
+              <input class="input input--with-action" id="password" name="password" type="password"
+                     autocomplete="current-password" required aria-describedby="password-error caps-warning" />
+              <button class="field__reveal" type="button" id="reveal"
+                      aria-label="Show password" aria-pressed="false">Show</button>
+            </div>
+            <div class="meter" id="meter" hidden aria-hidden="true">
+              <span class="meter__seg"></span><span class="meter__seg"></span>
+              <span class="meter__seg"></span><span class="meter__seg"></span>
+            </div>
+            <p class="meter__text" id="meter-text" hidden aria-live="polite"></p>
+            <span class="field__error" id="password-error" aria-live="polite"></span>
+            <span class="field__error field__error--transient" id="caps-warning" aria-live="polite"></span>
+          </div>
+
+          <button class="btn btn--primary btn--block btn--lg auth__submit" type="submit" id="submit">Sign in</button>
+        </form>
+
+        <p class="auth__switch" id="switch-line"></p>
+        <p class="legal">By continuing you agree to keep it civil in the fandom hubs.</p>
+      </div>
+    </div>
+
+    <aside class="auth__aside">
+      <div class="auth__aside-inner">
+        <div class="carried" id="carried" hidden></div>
+        <h2 class="auth__aside-title">
+          Recommendations that show their work
+        </h2>
+        <div class="auth__points">
+          <div class="auth__point">
+            <span class="auth__point-icon" aria-hidden="true">◎</span>
+            <div>
+              <h3>A profile built from how games play</h3>
+              <p>Not just genres — pace, difficulty, co-op, story weight, the lot.</p>
+            </div>
+          </div>
+          <div class="auth__point">
+            <span class="auth__point-icon" aria-hidden="true">↺</span>
+            <div>
+              <h3>It learns from every rating</h3>
+              <p>Say "not for me" once and that whole direction fades from your feed.</p>
+            </div>
+          </div>
+          <div class="auth__point">
+            <span class="auth__point-icon" aria-hidden="true">✦</span>
+            <div>
+              <h3>Reviews from players like you</h3>
+              <p>See what people who love the same games actually thought.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script type="module" src="/js/auth-page.js"></script>
+</body>
+</html>

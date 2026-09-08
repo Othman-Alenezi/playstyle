@@ -1,0 +1,3564 @@
+[
+{
+"id": "minecraft",
+"title": "Minecraft",
+"year": 2011,
+"franchise": "minecraft",
+"rating": 93,
+"pop": 98,
+"genres": [
+"Sandbox",
+"Survival"
+],
+"tags": [
+"sandbox",
+"crafting",
+"survival",
+"creative",
+"co-op",
+"mod-support",
+"family-friendly",
+"exploration",
+"base-building",
+"replayable"
+],
+"blurb": "The most played game ever made. Still the purest creative sandbox there is."
+},
+{
+"id": "cod-mw3",
+"title": "Call of Duty: Modern Warfare III",
+"year": 2023,
+"franchise": "call-of-duty",
+"rating": 72,
+"pop": 97,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"military",
+"multiplayer",
+"competitive",
+"realistic",
+"live-service",
+"pvp",
+"aaa",
+"seasonal"
+],
+"blurb": "Fast, twitchy military multiplayer with a yearly campaign and a huge seasonal grind."
+},
+{
+"id": "cs2",
+"title": "Counter-Strike 2",
+"year": 2023,
+"franchise": "counter-strike",
+"rating": 83,
+"pop": 96,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"tactical",
+"competitive",
+"esports",
+"pvp",
+"f2p",
+"realistic",
+"teamwork",
+"skill-ceiling"
+],
+"blurb": "The purest competitive shooter there is. Five rounds in you'll know if it's for you."
+},
+{
+"id": "cod-warzone",
+"title": "Call of Duty: Warzone",
+"year": 2020,
+"franchise": "call-of-duty",
+"rating": 76,
+"pop": 95,
+"genres": [
+"Shooter"
+],
+"tags": [
+"battle-royale",
+"fps",
+"first-person",
+"military",
+"multiplayer",
+"competitive",
+"f2p",
+"pvp",
+"live-service",
+"seasonal"
+],
+"blurb": "Free-to-play battle royale built on Call of Duty gunplay. Drop, loot, last squad standing."
+},
+{
+"id": "gta-5",
+"title": "Grand Theft Auto V",
+"year": 2013,
+"franchise": "gta",
+"rating": 96,
+"pop": 95,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"open-world",
+"crime",
+"sandbox",
+"multiplayer",
+"comedy",
+"third-person",
+"driving",
+"mature",
+"long",
+"aaa"
+],
+"blurb": "Three criminals, one city, and an online mode that refuses to die."
+},
+{
+"id": "cod-bo6",
+"title": "Call of Duty: Black Ops 6",
+"year": 2024,
+"franchise": "call-of-duty",
+"rating": 80,
+"pop": 94,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"military",
+"multiplayer",
+"competitive",
+"story-rich",
+"pvp",
+"live-service",
+"aaa",
+"zombie"
+],
+"blurb": "Omnimovement shakes up the formula, plus the best Black Ops campaign in years and Zombies."
+},
+{
+"id": "valorant",
+"title": "Valorant",
+"year": 2020,
+"franchise": "valorant",
+"rating": 80,
+"pop": 94,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"tactical",
+"hero-shooter",
+"competitive",
+"esports",
+"pvp",
+"f2p",
+"teamwork",
+"skill-ceiling"
+],
+"blurb": "Counter-Strike precision fused with hero abilities. Ruthlessly competitive, endlessly readable."
+},
+{
+"id": "fortnite",
+"title": "Fortnite",
+"year": 2017,
+"franchise": "fortnite",
+"rating": 78,
+"pop": 93,
+"genres": [
+"Shooter"
+],
+"tags": [
+"battle-royale",
+"third-person",
+"building",
+"f2p",
+"cartoon",
+"seasonal",
+"live-service",
+"multiplayer",
+"pvp",
+"family-friendly"
+],
+"blurb": "Build, edit, win. A constantly mutating cultural event that happens to be a great shooter."
+},
+{
+"id": "elden-ring",
+"title": "Elden Ring",
+"year": 2022,
+"franchise": "soulsborne",
+"rating": 96,
+"pop": 92,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"souls-like",
+"open-world",
+"action-rpg",
+"difficult",
+"dark-fantasy",
+"atmospheric",
+"exploration",
+"third-person",
+"combat-focused",
+"long"
+],
+"blurb": "FromSoftware's world design at its peak. Punishing, mysterious, and impossible to put down."
+},
+{
+"id": "skyrim",
+"title": "The Elder Scrolls V: Skyrim",
+"year": 2011,
+"franchise": "elder-scrolls",
+"rating": 94,
+"pop": 91,
+"genres": [
+"RPG"
+],
+"tags": [
+"open-world",
+"rpg",
+"fantasy",
+"exploration",
+"mod-support",
+"first-person",
+"sandbox",
+"long",
+"atmospheric",
+"replayable"
+],
+"blurb": "Fifteen years on, still the definitive 'walk in any direction and find something' game."
+},
+{
+"id": "rdr2",
+"title": "Red Dead Redemption 2",
+"year": 2018,
+"franchise": "red-dead",
+"rating": 97,
+"pop": 91,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"open-world",
+"western",
+"story-rich",
+"realistic",
+"cinematic",
+"long",
+"third-person",
+"exploration",
+"emotional",
+"aaa"
+],
+"blurb": "Slow, deliberate, and unmatched as a world. Give it the first six hours."
+},
+{
+"id": "witcher-3",
+"title": "The Witcher 3: Wild Hunt",
+"year": 2015,
+"franchise": "witcher",
+"rating": 93,
+"pop": 90,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"action-rpg",
+"open-world",
+"story-rich",
+"fantasy",
+"narrative-choices",
+"long",
+"third-person",
+"exploration",
+"mature",
+"aaa"
+],
+"blurb": "The best side quests ever written. Every 'small' job turns into a short story."
+},
+{
+"id": "roblox",
+"title": "Roblox",
+"year": 2006,
+"franchise": "roblox",
+"rating": 70,
+"pop": 90,
+"genres": [
+"Sandbox"
+],
+"tags": [
+"sandbox",
+"f2p",
+"multiplayer",
+"creative",
+"family-friendly",
+"social",
+"mod-support",
+"varied",
+"short-sessions",
+"cartoon"
+],
+"blurb": "Millions of user-made games. A platform more than a game, and unavoidable."
+},
+{
+"id": "apex-legends",
+"title": "Apex Legends",
+"year": 2019,
+"franchise": "apex",
+"rating": 85,
+"pop": 89,
+"genres": [
+"Shooter"
+],
+"tags": [
+"battle-royale",
+"fps",
+"first-person",
+"hero-shooter",
+"f2p",
+"sci-fi",
+"movement",
+"multiplayer",
+"competitive",
+"pvp"
+],
+"blurb": "The most fluid movement in any battle royale, with squad pings that changed the genre."
+},
+{
+"id": "baldurs-gate-3",
+"title": "Baldur's Gate 3",
+"year": 2023,
+"franchise": "baldurs-gate",
+"rating": 96,
+"pop": 89,
+"genres": [
+"RPG"
+],
+"tags": [
+"rpg",
+"turn-based",
+"narrative-choices",
+"fantasy",
+"co-op",
+"long",
+"tactics",
+"story-rich",
+"isometric",
+"replayable"
+],
+"blurb": "It says yes to everything you try. The high-water mark for player freedom."
+},
+{
+"id": "cyberpunk-2077",
+"title": "Cyberpunk 2077",
+"year": 2020,
+"franchise": "cyberpunk",
+"rating": 86,
+"pop": 88,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"action-rpg",
+"open-world",
+"cyberpunk",
+"story-rich",
+"first-person",
+"narrative-choices",
+"sci-fi",
+"atmospheric",
+"mature",
+"aaa"
+],
+"blurb": "Night City is the most convincing city in games, and Phantom Liberty completes the redemption."
+},
+{
+"id": "ea-fc-25",
+"title": "EA Sports FC 25",
+"year": 2024,
+"franchise": "fifa",
+"rating": 68,
+"pop": 88,
+"genres": [
+"Sports"
+],
+"tags": [
+"sports",
+"football",
+"multiplayer",
+"competitive",
+"live-service",
+"simulation",
+"seasonal",
+"pvp",
+"local-multiplayer",
+"aaa"
+],
+"blurb": "Football's annual ritual. Ultimate Team is the whole game and you know it."
+},
+{
+"id": "helldivers-2",
+"title": "Helldivers 2",
+"year": 2024,
+"franchise": "helldivers",
+"rating": 82,
+"pop": 86,
+"genres": [
+"Shooter"
+],
+"tags": [
+"third-person",
+"co-op",
+"sci-fi",
+"satire",
+"live-service",
+"difficult",
+"teamwork",
+"friendly-fire",
+"pve",
+"comedy"
+],
+"blurb": "Four players, one bug planet, endless friendly fire. Co-op comedy at its finest."
+},
+{
+"id": "zelda-totk",
+"title": "The Legend of Zelda: Tears of the Kingdom",
+"year": 2023,
+"franchise": "zelda",
+"rating": 96,
+"pop": 86,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"open-world",
+"exploration",
+"physics",
+"sandbox",
+"adventure",
+"family-friendly",
+"creative",
+"long",
+"puzzle",
+"third-person"
+],
+"blurb": "A physics sandbox with a Zelda skin. Whatever silly plan you have, it works."
+},
+{
+"id": "gta-online",
+"title": "Grand Theft Auto Online",
+"year": 2013,
+"franchise": "gta",
+"rating": 76,
+"pop": 86,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"open-world",
+"crime",
+"multiplayer",
+"sandbox",
+"live-service",
+"co-op",
+"driving",
+"grindy",
+"chaotic",
+"mature"
+],
+"blurb": "Heists with friends, griefers in flying bikes. Still going after a decade."
+},
+{
+"id": "overwatch-2",
+"title": "Overwatch 2",
+"year": 2022,
+"franchise": "overwatch",
+"rating": 73,
+"pop": 85,
+"genres": [
+"Shooter"
+],
+"tags": [
+"hero-shooter",
+"fps",
+"first-person",
+"multiplayer",
+"competitive",
+"teamwork",
+"cartoon",
+"f2p",
+"pvp",
+"live-service"
+],
+"blurb": "Colourful 5v5 hero combat where team composition matters as much as your aim."
+},
+{
+"id": "genshin-impact",
+"title": "Genshin Impact",
+"year": 2020,
+"franchise": "genshin",
+"rating": 82,
+"pop": 85,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"action-rpg",
+"open-world",
+"anime",
+"gacha",
+"f2p",
+"co-op",
+"exploration",
+"seasonal",
+"party-based",
+"live-service"
+],
+"blurb": "A genuinely gorgeous open world attached to a gacha. Free until it isn't."
+},
+{
+"id": "gow-ragnarok",
+"title": "God of War Ragnarök",
+"year": 2022,
+"franchise": "god-of-war",
+"rating": 94,
+"pop": 84,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"action-adventure",
+"story-rich",
+"norse",
+"third-person",
+"cinematic",
+"emotional",
+"combat-focused",
+"linear",
+"father-son",
+"aaa"
+],
+"blurb": "Blockbuster spectacle with real emotional weight. The axe still feels perfect."
+},
+{
+"id": "stardew-valley",
+"title": "Stardew Valley",
+"year": 2016,
+"franchise": "stardew",
+"rating": 89,
+"pop": 84,
+"genres": [
+"Simulation"
+],
+"tags": [
+"cozy",
+"farming",
+"simulation",
+"relaxing",
+"pixel-art",
+"co-op",
+"indie",
+"chill",
+"long",
+"charming"
+],
+"blurb": "Quit your job, grow parsnips, romance a villager. Made by one person, and it shows."
+},
+{
+"id": "mario-kart-world",
+"title": "Mario Kart 8 Deluxe",
+"year": 2017,
+"franchise": "mario-kart",
+"rating": 92,
+"pop": 84,
+"genres": [
+"Racing"
+],
+"tags": [
+"racing",
+"party",
+"local-multiplayer",
+"family-friendly",
+"arcade",
+"couch-co-op",
+"charming",
+"multiplayer",
+"replayable",
+"chill"
+],
+"blurb": "The best selling kart racer for a reason. Blue shells still ruin friendships."
+},
+{
+"id": "marvel-rivals",
+"title": "Marvel Rivals",
+"year": 2024,
+"franchise": "marvel-rivals",
+"rating": 80,
+"pop": 84,
+"genres": [
+"Shooter"
+],
+"tags": [
+"hero-shooter",
+"third-person",
+"multiplayer",
+"competitive",
+"f2p",
+"teamwork",
+"superhero",
+"pvp",
+"seasonal",
+"live-service"
+],
+"blurb": "Overwatch with Marvel characters and destructible maps. Wildly popular for good reason."
+},
+{
+"id": "r6-siege",
+"title": "Rainbow Six Siege",
+"year": 2015,
+"franchise": "rainbow-six",
+"rating": 79,
+"pop": 83,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"tactical",
+"competitive",
+"destructible",
+"pvp",
+"realistic",
+"teamwork",
+"esports",
+"skill-ceiling"
+],
+"blurb": "Breach a wall, hold an angle, win the round. Tense, slow, deeply tactical."
+},
+{
+"id": "rocket-league",
+"title": "Rocket League",
+"year": 2015,
+"franchise": "rocket-league",
+"rating": 86,
+"pop": 82,
+"genres": [
+"Sports"
+],
+"tags": [
+"sports",
+"driving",
+"competitive",
+"esports",
+"f2p",
+"arcade",
+"multiplayer",
+"skill-ceiling",
+"teamwork",
+"pvp"
+],
+"blurb": "Car football. Easy to understand, impossible to master, perfect to watch."
+},
+{
+"id": "monster-hunter-wilds",
+"title": "Monster Hunter Wilds",
+"year": 2025,
+"franchise": "monster-hunter",
+"rating": 88,
+"pop": 81,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"action-rpg",
+"co-op",
+"grindy",
+"progression",
+"monsters",
+"combat-focused",
+"third-person",
+"loot",
+"teamwork",
+"skill-ceiling"
+],
+"blurb": "Learn one monster for forty hours, then wear it as a hat. Deeply satisfying loop."
+},
+{
+"id": "destiny-2",
+"title": "Destiny 2",
+"year": 2017,
+"franchise": "destiny",
+"rating": 83,
+"pop": 80,
+"genres": [
+"Shooter",
+"RPG"
+],
+"tags": [
+"looter-shooter",
+"fps",
+"first-person",
+"sci-fi",
+"space",
+"live-service",
+"co-op",
+"loot",
+"progression",
+"grindy"
+],
+"blurb": "Sci-fi gunfeel that has no equal, wrapped in a loot grind that will eat your year."
+},
+{
+"id": "tlou-2",
+"title": "The Last of Us Part II",
+"year": 2020,
+"franchise": "the-last-of-us",
+"rating": 93,
+"pop": 80,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"action-adventure",
+"story-rich",
+"post-apocalyptic",
+"emotional",
+"stealth",
+"cinematic",
+"third-person",
+"mature",
+"tense",
+"aaa"
+],
+"blurb": "Uncomfortable on purpose. The most technically astonishing narrative game of its generation."
+},
+{
+"id": "terraria",
+"title": "Terraria",
+"year": 2011,
+"franchise": "terraria",
+"rating": 88,
+"pop": 80,
+"genres": [
+"Sandbox",
+"Survival"
+],
+"tags": [
+"sandbox",
+"2d",
+"crafting",
+"exploration",
+"co-op",
+"pixel-art",
+"progression",
+"boss-rush",
+"base-building",
+"long"
+],
+"blurb": "Minecraft's 2D cousin with far better bosses and a real progression arc."
+},
+{
+"id": "smash-ultimate",
+"title": "Super Smash Bros. Ultimate",
+"year": 2018,
+"franchise": "smash",
+"rating": 93,
+"pop": 80,
+"genres": [
+"Fighting"
+],
+"tags": [
+"fighting",
+"party",
+"local-multiplayer",
+"family-friendly",
+"competitive",
+"couch-co-op",
+"arcade",
+"esports",
+"crossover",
+"replayable"
+],
+"blurb": "Every character. Every stage. The definitive couch multiplayer game."
+},
+{
+"id": "pokemon-sv",
+"title": "Pokémon Scarlet & Violet",
+"year": 2022,
+"franchise": "pokemon",
+"rating": 72,
+"pop": 80,
+"genres": [
+"JRPG"
+],
+"tags": [
+"jrpg",
+"creature-collector",
+"open-world",
+"family-friendly",
+"turn-based",
+"exploration",
+"co-op",
+"charming",
+"progression",
+"long"
+],
+"blurb": "Technically rough, genuinely fun. The open-world direction is the right one."
+},
+{
+"id": "wow",
+"title": "World of Warcraft",
+"year": 2004,
+"franchise": "warcraft",
+"rating": 88,
+"pop": 79,
+"genres": [
+"MMO"
+],
+"tags": [
+"mmo",
+"fantasy",
+"pve",
+"social",
+"grindy",
+"long",
+"teamwork",
+"progression",
+"raiding",
+"live-service"
+],
+"blurb": "Twenty years of raid nights. Still the benchmark for endgame group content."
+},
+{
+"id": "re4-remake",
+"title": "Resident Evil 4 Remake",
+"year": 2023,
+"franchise": "resident-evil",
+"rating": 93,
+"pop": 79,
+"genres": [
+"Horror"
+],
+"tags": [
+"horror",
+"action",
+"third-person",
+"survival",
+"story-rich",
+"combat-focused",
+"tense",
+"remake",
+"campy",
+"replayable"
+],
+"blurb": "The remake that improved on a classic. Tense, ridiculous and endlessly replayable."
+},
+{
+"id": "doom-eternal",
+"title": "DOOM Eternal",
+"year": 2020,
+"franchise": "doom",
+"rating": 88,
+"pop": 78,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"fast-paced",
+"singleplayer",
+"difficult",
+"combat-focused",
+"demons",
+"metal",
+"arcade",
+"skill-ceiling"
+],
+"blurb": "A violent rhythm game disguised as a shooter. Keep moving or die."
+},
+{
+"id": "diablo-4",
+"title": "Diablo IV",
+"year": 2023,
+"franchise": "diablo",
+"rating": 80,
+"pop": 78,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"action-rpg",
+"isometric",
+"loot",
+"live-service",
+"dark-fantasy",
+"co-op",
+"progression",
+"grindy",
+"seasonal",
+"combat-focused"
+],
+"blurb": "Click demons, get shinier trousers, repeat. The seasonal treadmill done at AAA scale."
+},
+{
+"id": "spiderman-2",
+"title": "Marvel's Spider-Man 2",
+"year": 2023,
+"franchise": "spider-man",
+"rating": 90,
+"pop": 78,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"open-world",
+"superhero",
+"action",
+"third-person",
+"cinematic",
+"story-rich",
+"traversal",
+"combat-focused",
+"family-friendly",
+"aaa"
+],
+"blurb": "Web-swinging is still the best traversal in games. Pure joy to just move around."
+},
+{
+"id": "silksong",
+"title": "Hollow Knight: Silksong",
+"year": 2025,
+"franchise": "hollow-knight",
+"rating": 92,
+"pop": 78,
+"genres": [
+"Metroidvania"
+],
+"tags": [
+"metroidvania",
+"2d",
+"difficult",
+"atmospheric",
+"exploration",
+"indie",
+"hand-drawn",
+"fast-paced",
+"boss-rush",
+"long"
+],
+"blurb": "Faster, harder, and worth every year of the wait."
+},
+{
+"id": "balatro",
+"title": "Balatro",
+"year": 2024,
+"franchise": "balatro",
+"rating": 90,
+"pop": 78,
+"genres": [
+"Roguelike"
+],
+"tags": [
+"deck-building",
+"card-game",
+"roguelike",
+"addictive",
+"indie",
+"short-sessions",
+"strategy",
+"numbers-go-up",
+"chill",
+"replayable"
+],
+"blurb": "Poker hands as a roguelike. You will lose entire evenings to this."
+},
+{
+"id": "ffxiv",
+"title": "Final Fantasy XIV",
+"year": 2013,
+"franchise": "final-fantasy",
+"rating": 90,
+"pop": 77,
+"genres": [
+"MMO"
+],
+"tags": [
+"mmo",
+"story-rich",
+"fantasy",
+"social",
+"pve",
+"long",
+"party-based",
+"teamwork",
+"progression",
+"emotional"
+],
+"blurb": "The rare MMO with a story worth the subscription. The free trial is famously generous."
+},
+{
+"id": "hogwarts-legacy",
+"title": "Hogwarts Legacy",
+"year": 2023,
+"franchise": "harry-potter",
+"rating": 84,
+"pop": 77,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"open-world",
+"fantasy",
+"magic",
+"action-rpg",
+"exploration",
+"third-person",
+"cozy",
+"story-rich",
+"family-friendly",
+"aaa"
+],
+"blurb": "The castle is the real star. Wandering the corridors is worth the price alone."
+},
+{
+"id": "pubg",
+"title": "PUBG: Battlegrounds",
+"year": 2017,
+"franchise": "pubg",
+"rating": 72,
+"pop": 76,
+"genres": [
+"Shooter"
+],
+"tags": [
+"battle-royale",
+"fps",
+"third-person",
+"realistic",
+"multiplayer",
+"pvp",
+"tense",
+"f2p",
+"military",
+"teamwork"
+],
+"blurb": "The original battle royale. Slower, heavier and more nerve-shredding than its rivals."
+},
+{
+"id": "fallout-4",
+"title": "Fallout 4",
+"year": 2015,
+"franchise": "fallout",
+"rating": 84,
+"pop": 76,
+"genres": [
+"RPG",
+"Shooter"
+],
+"tags": [
+"open-world",
+"rpg",
+"post-apocalyptic",
+"crafting",
+"base-building",
+"fps",
+"exploration",
+"mod-support",
+"sandbox",
+"long"
+],
+"blurb": "Weakest Fallout writing, strongest Fallout shooting, and settlement building is a trap."
+},
+{
+"id": "ghost-of-tsushima",
+"title": "Ghost of Tsushima",
+"year": 2020,
+"franchise": "ghost",
+"rating": 83,
+"pop": 76,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"open-world",
+"samurai",
+"historical",
+"action",
+"atmospheric",
+"third-person",
+"combat-focused",
+"japan",
+"exploration",
+"cinematic"
+],
+"blurb": "The most beautiful open world Sony has made, and duels that feel like cinema."
+},
+{
+"id": "palworld",
+"title": "Palworld",
+"year": 2024,
+"franchise": "palworld",
+"rating": 78,
+"pop": 76,
+"genres": [
+"Survival"
+],
+"tags": [
+"survival",
+"crafting",
+"co-op",
+"creature-collector",
+"open-world",
+"base-building",
+"third-person",
+"progression",
+"multiplayer",
+"comedy"
+],
+"blurb": "Creature collecting meets factory automation meets guns. Somehow it works."
+},
+{
+"id": "hollow-knight",
+"title": "Hollow Knight",
+"year": 2017,
+"franchise": "hollow-knight",
+"rating": 90,
+"pop": 76,
+"genres": [
+"Metroidvania"
+],
+"tags": [
+"metroidvania",
+"2d",
+"difficult",
+"atmospheric",
+"exploration",
+"indie",
+"hand-drawn",
+"lore-heavy",
+"boss-rush",
+"long"
+],
+"blurb": "Melancholy bug kingdom, brutal bosses, and a map you slowly learn to love."
+},
+{
+"id": "animal-crossing-nh",
+"title": "Animal Crossing: New Horizons",
+"year": 2020,
+"franchise": "animal-crossing",
+"rating": 90,
+"pop": 76,
+"genres": [
+"Simulation"
+],
+"tags": [
+"cozy",
+"relaxing",
+"life-sim",
+"family-friendly",
+"sandbox",
+"creative",
+"chill",
+"charming",
+"social",
+"long"
+],
+"blurb": "A gentle island routine. No fail state, no pressure, just debt to a raccoon."
+},
+{
+"id": "forza-horizon-5",
+"title": "Forza Horizon 5",
+"year": 2021,
+"franchise": "forza",
+"rating": 92,
+"pop": 76,
+"genres": [
+"Racing"
+],
+"tags": [
+"racing",
+"driving",
+"open-world",
+"arcade",
+"relaxing",
+"multiplayer",
+"chill",
+"beautiful",
+"progression",
+"family-friendly"
+],
+"blurb": "The most relaxing racing game there is. Just drive around Mexico with music on."
+},
+{
+"id": "dark-souls-3",
+"title": "Dark Souls III",
+"year": 2016,
+"franchise": "soulsborne",
+"rating": 89,
+"pop": 75,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"souls-like",
+"action-rpg",
+"difficult",
+"dark-fantasy",
+"atmospheric",
+"third-person",
+"combat-focused",
+"linear",
+"lore-heavy",
+"boss-rush"
+],
+"blurb": "The most refined Dark Souls combat, and a farewell tour of the whole series."
+},
+{
+"id": "dead-by-daylight",
+"title": "Dead by Daylight",
+"year": 2016,
+"franchise": "dbd",
+"rating": 74,
+"pop": 75,
+"genres": [
+"Horror"
+],
+"tags": [
+"horror",
+"multiplayer",
+"asymmetric",
+"pvp",
+"live-service",
+"teamwork",
+"tense",
+"seasonal",
+"third-person",
+"chase"
+],
+"blurb": "Four survivors versus one killer. A whole hobby's worth of licensed horror crossovers."
+},
+{
+"id": "battlefield-1",
+"title": "Battlefield 1",
+"year": 2016,
+"franchise": "battlefield",
+"rating": 88,
+"pop": 74,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"military",
+"historical",
+"multiplayer",
+"large-scale",
+"vehicles",
+"atmospheric",
+"pvp",
+"teamwork"
+],
+"blurb": "World War I as a muddy, thunderous spectacle. Still the series' most atmospheric entry."
+},
+{
+"id": "halo-infinite",
+"title": "Halo Infinite",
+"year": 2021,
+"franchise": "halo",
+"rating": 80,
+"pop": 74,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"sci-fi",
+"multiplayer",
+"campaign",
+"open-world",
+"co-op",
+"competitive",
+"arcade",
+"aaa"
+],
+"blurb": "The gunplay finally sings again, and the grappling hook makes the sandbox playful."
+},
+{
+"id": "persona-5-royal",
+"title": "Persona 5 Royal",
+"year": 2019,
+"franchise": "persona",
+"rating": 94,
+"pop": 74,
+"genres": [
+"JRPG"
+],
+"tags": [
+"jrpg",
+"turn-based",
+"anime",
+"story-rich",
+"social-sim",
+"long",
+"stylish",
+"dungeon-crawler",
+"emotional",
+"cult-classic"
+],
+"blurb": "A hundred hours of high-school life and stylish heists. Absurdly confident presentation."
+},
+{
+"id": "ac-shadows",
+"title": "Assassin's Creed Shadows",
+"year": 2025,
+"franchise": "assassins-creed",
+"rating": 81,
+"pop": 74,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"open-world",
+"action-rpg",
+"historical",
+"stealth",
+"japan",
+"third-person",
+"exploration",
+"long",
+"combat-focused",
+"aaa"
+],
+"blurb": "Feudal Japan at last, with a shinobi and a samurai who play completely differently."
+},
+{
+"id": "rust",
+"title": "Rust",
+"year": 2018,
+"franchise": "rust",
+"rating": 80,
+"pop": 74,
+"genres": [
+"Survival"
+],
+"tags": [
+"survival",
+"crafting",
+"multiplayer",
+"pvp",
+"hardcore",
+"base-building",
+"first-person",
+"brutal",
+"raiding",
+"social"
+],
+"blurb": "Wake up naked, get killed by a stranger with a rock. Peak online cruelty."
+},
+{
+"id": "portal-2",
+"title": "Portal 2",
+"year": 2011,
+"franchise": "portal",
+"rating": 95,
+"pop": 74,
+"genres": [
+"Puzzle"
+],
+"tags": [
+"puzzle",
+"first-person",
+"comedy",
+"co-op",
+"sci-fi",
+"short",
+"writing",
+"family-friendly",
+"linear",
+"cult-classic"
+],
+"blurb": "Perfect puzzle pacing and perfect jokes. The co-op campaign is a separate treasure."
+},
+{
+"id": "nba-2k25",
+"title": "NBA 2K25",
+"year": 2024,
+"franchise": "nba-2k",
+"rating": 74,
+"pop": 74,
+"genres": [
+"Sports"
+],
+"tags": [
+"sports",
+"basketball",
+"multiplayer",
+"simulation",
+"live-service",
+"competitive",
+"seasonal",
+"pvp",
+"realistic",
+"aaa"
+],
+"blurb": "Superb on-court simulation attached to an aggressive currency store."
+},
+{
+"id": "mario-odyssey",
+"title": "Super Mario Odyssey",
+"year": 2017,
+"franchise": "mario",
+"rating": 97,
+"pop": 74,
+"genres": [
+"Platformer"
+],
+"tags": [
+"platformer",
+"3d",
+"family-friendly",
+"exploration",
+"charming",
+"creative",
+"chill",
+"varied",
+"singleplayer",
+"joyful"
+],
+"blurb": "Movement so good you'll jump around for fun. Pure, uncynical delight."
+},
+{
+"id": "wukong",
+"title": "Black Myth: Wukong",
+"year": 2024,
+"franchise": "wukong",
+"rating": 81,
+"pop": 74,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"action-rpg",
+"souls-like",
+"difficult",
+"mythology",
+"third-person",
+"combat-focused",
+"beautiful",
+"boss-rush",
+"linear",
+"singleplayer"
+],
+"blurb": "Spectacular boss fights rooted in Chinese mythology. A genuine technical showcase."
+},
+{
+"id": "ff7-rebirth",
+"title": "Final Fantasy VII Rebirth",
+"year": 2024,
+"franchise": "final-fantasy",
+"rating": 92,
+"pop": 73,
+"genres": [
+"JRPG",
+"Action RPG"
+],
+"tags": [
+"jrpg",
+"action-rpg",
+"story-rich",
+"anime",
+"emotional",
+"open-world",
+"cinematic",
+"long",
+"party-based",
+"aaa"
+],
+"blurb": "Enormous, messy, sincere. The combat system is the best in the series."
+},
+{
+"id": "battlefield-2042",
+"title": "Battlefield 2042",
+"year": 2021,
+"franchise": "battlefield",
+"rating": 64,
+"pop": 72,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"military",
+"multiplayer",
+"large-scale",
+"vehicles",
+"realistic",
+"pvp",
+"teamwork",
+"aaa"
+],
+"blurb": "128-player warfare with vehicles, collapsing skyscrapers and squad play at enormous scale."
+},
+{
+"id": "sekiro",
+"title": "Sekiro: Shadows Die Twice",
+"year": 2019,
+"franchise": "soulsborne",
+"rating": 90,
+"pop": 72,
+"genres": [
+"Action"
+],
+"tags": [
+"souls-like",
+"difficult",
+"stealth",
+"historical",
+"japan",
+"third-person",
+"combat-focused",
+"singleplayer",
+"skill-ceiling",
+"boss-rush"
+],
+"blurb": "Deflect, don't dodge. A rhythm of steel that clicks and then never lets go."
+},
+{
+"id": "horizon-fw",
+"title": "Horizon Forbidden West",
+"year": 2022,
+"franchise": "horizon",
+"rating": 88,
+"pop": 72,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"open-world",
+"action-rpg",
+"sci-fi",
+"post-apocalyptic",
+"third-person",
+"exploration",
+"combat-focused",
+"robots",
+"long",
+"aaa"
+],
+"blurb": "Fighting robot dinosaurs with a bow remains an inspired idea, executed beautifully."
+},
+{
+"id": "vampire-survivors",
+"title": "Vampire Survivors",
+"year": 2022,
+"franchise": "vampire-survivors",
+"rating": 88,
+"pop": 72,
+"genres": [
+"Roguelike"
+],
+"tags": [
+"roguelike",
+"arcade",
+"addictive",
+"pixel-art",
+"short-sessions",
+"indie",
+"numbers-go-up",
+"chill",
+"progression",
+"cheap"
+],
+"blurb": "Barely a game and completely irresistible. Screen full of numbers, brain full of dopamine."
+},
+{
+"id": "expedition-33",
+"title": "Clair Obscur: Expedition 33",
+"year": 2025,
+"franchise": "expedition-33",
+"rating": 93,
+"pop": 72,
+"genres": [
+"JRPG"
+],
+"tags": [
+"jrpg",
+"turn-based",
+"story-rich",
+"emotional",
+"beautiful",
+"party-based",
+"difficult",
+"soundtrack",
+"indie",
+"cinematic"
+],
+"blurb": "Turn-based combat with real-time dodges, and art direction that stops you dead."
+},
+{
+"id": "tarkov",
+"title": "Escape from Tarkov",
+"year": 2017,
+"franchise": "tarkov",
+"rating": 78,
+"pop": 71,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"extraction",
+"hardcore",
+"realistic",
+"survival",
+"difficult",
+"pvp",
+"loot",
+"tense"
+],
+"blurb": "Brutally realistic extraction shooter where losing a raid costs you everything you carried."
+},
+{
+"id": "lethal-company",
+"title": "Lethal Company",
+"year": 2023,
+"franchise": "lethal-company",
+"rating": 85,
+"pop": 71,
+"genres": [
+"Horror"
+],
+"tags": [
+"co-op",
+"horror",
+"comedy",
+"indie",
+"multiplayer",
+"first-person",
+"voice-chat",
+"tense",
+"procedural",
+"short-sessions"
+],
+"blurb": "Collect scrap for the Company, lose your friends to a monster, laugh anyway."
+},
+{
+"id": "titanfall-2",
+"title": "Titanfall 2",
+"year": 2016,
+"franchise": "titanfall",
+"rating": 86,
+"pop": 70,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"sci-fi",
+"movement",
+"story-rich",
+"singleplayer",
+"linear",
+"mechs",
+"multiplayer",
+"short"
+],
+"blurb": "Wall-run into a mech. The campaign is a six-hour masterclass in level design."
+},
+{
+"id": "fallout-nv",
+"title": "Fallout: New Vegas",
+"year": 2010,
+"franchise": "fallout",
+"rating": 84,
+"pop": 70,
+"genres": [
+"RPG"
+],
+"tags": [
+"rpg",
+"post-apocalyptic",
+"narrative-choices",
+"story-rich",
+"open-world",
+"mod-support",
+"first-person",
+"factions",
+"replayable",
+"cult-classic"
+],
+"blurb": "The gold standard for reactive RPG writing. Your choices genuinely rearrange the world."
+},
+{
+"id": "poe-2",
+"title": "Path of Exile 2",
+"year": 2024,
+"franchise": "path-of-exile",
+"rating": 86,
+"pop": 70,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"action-rpg",
+"isometric",
+"loot",
+"deep-systems",
+"f2p",
+"difficult",
+"progression",
+"grindy",
+"build-craft",
+"dark-fantasy"
+],
+"blurb": "A skill tree the size of a country. For people who read spreadsheets for fun."
+},
+{
+"id": "re-village",
+"title": "Resident Evil Village",
+"year": 2021,
+"franchise": "resident-evil",
+"rating": 84,
+"pop": 70,
+"genres": [
+"Horror"
+],
+"tags": [
+"horror",
+"first-person",
+"survival",
+"action",
+"tense",
+"gothic",
+"story-rich",
+"combat-focused",
+"campy",
+"atmospheric"
+],
+"blurb": "Four wildly different horror styles in one game. Yes, that lady."
+},
+{
+"id": "valheim",
+"title": "Valheim",
+"year": 2021,
+"franchise": "valheim",
+"rating": 86,
+"pop": 70,
+"genres": [
+"Survival"
+],
+"tags": [
+"survival",
+"crafting",
+"co-op",
+"base-building",
+"vikings",
+"exploration",
+"atmospheric",
+"progression",
+"procedural",
+"third-person"
+],
+"blurb": "Viking survival with genuinely beautiful lighting and satisfying building physics."
+},
+{
+"id": "hades-2",
+"title": "Hades II",
+"year": 2024,
+"franchise": "hades",
+"rating": 90,
+"pop": 70,
+"genres": [
+"Roguelike"
+],
+"tags": [
+"roguelike",
+"action",
+"isometric",
+"story-rich",
+"mythology",
+"replayable",
+"indie",
+"fast-paced",
+"progression",
+"soundtrack"
+],
+"blurb": "Dying is progress. The writing and art are absurdly good for a roguelike."
+},
+{
+"id": "among-us",
+"title": "Among Us",
+"year": 2018,
+"franchise": "among-us",
+"rating": 80,
+"pop": 70,
+"genres": [
+"Party"
+],
+"tags": [
+"party",
+"social-deduction",
+"multiplayer",
+"f2p",
+"short-sessions",
+"voice-chat",
+"family-friendly",
+"deduction",
+"social",
+"cheap"
+],
+"blurb": "Lie to your friends in space. Better with voice chat and a shaky moral compass."
+},
+{
+"id": "mass-effect-le",
+"title": "Mass Effect Legendary Edition",
+"year": 2021,
+"franchise": "mass-effect",
+"rating": 86,
+"pop": 69,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"action-rpg",
+"sci-fi",
+"space",
+"story-rich",
+"narrative-choices",
+"third-person",
+"cinematic",
+"companions",
+"trilogy",
+"emotional"
+],
+"blurb": "Three games, one save file, and a crew you'll still think about years later."
+},
+{
+"id": "the-finals",
+"title": "The Finals",
+"year": 2023,
+"franchise": "the-finals",
+"rating": 81,
+"pop": 68,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"destructible",
+"competitive",
+"f2p",
+"multiplayer",
+"teamwork",
+"pvp",
+"fast-paced",
+"gameshow"
+],
+"blurb": "Every wall, floor and ceiling can come down. Chaos as a core mechanic."
+},
+{
+"id": "bloodborne",
+"title": "Bloodborne",
+"year": 2015,
+"franchise": "soulsborne",
+"rating": 92,
+"pop": 68,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"souls-like",
+"horror",
+"gothic",
+"difficult",
+"atmospheric",
+"third-person",
+"combat-focused",
+"fast-paced",
+"lore-heavy",
+"boss-rush"
+],
+"blurb": "Victorian cosmic horror with the most aggressive combat FromSoft ever built."
+},
+{
+"id": "uncharted-4",
+"title": "Uncharted 4: A Thief's End",
+"year": 2016,
+"franchise": "uncharted",
+"rating": 93,
+"pop": 68,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"action-adventure",
+"story-rich",
+"cinematic",
+"linear",
+"third-person",
+"comedy",
+"set-pieces",
+"short",
+"family-friendly",
+"aaa"
+],
+"blurb": "A summer blockbuster you hold the controller for. The jeep chase alone justifies it."
+},
+{
+"id": "phasmophobia",
+"title": "Phasmophobia",
+"year": 2020,
+"franchise": "phasmophobia",
+"rating": 82,
+"pop": 68,
+"genres": [
+"Horror"
+],
+"tags": [
+"horror",
+"co-op",
+"multiplayer",
+"ghosts",
+"first-person",
+"tense",
+"teamwork",
+"voice-chat",
+"investigation",
+"indie"
+],
+"blurb": "Ghost hunting with friends. Half detective work, half everyone screaming at once."
+},
+{
+"id": "subnautica",
+"title": "Subnautica",
+"year": 2018,
+"franchise": "subnautica",
+"rating": 87,
+"pop": 68,
+"genres": [
+"Survival"
+],
+"tags": [
+"survival",
+"exploration",
+"underwater",
+"sci-fi",
+"atmospheric",
+"singleplayer",
+"crafting",
+"tense",
+"story-rich",
+"first-person"
+],
+"blurb": "Ocean exploration that turns genuine fear of the deep into wonder. Play it blind."
+},
+{
+"id": "split-fiction",
+"title": "Split Fiction",
+"year": 2025,
+"franchise": "hazelight",
+"rating": 91,
+"pop": 68,
+"genres": [
+"Platformer"
+],
+"tags": [
+"co-op",
+"platformer",
+"local-multiplayer",
+"story-rich",
+"creative",
+"varied",
+"couch-co-op",
+"family-friendly",
+"linear",
+"charming"
+],
+"blurb": "Hazelight again: two players, sci-fi and fantasy worlds, endless mechanical invention."
+},
+{
+"id": "street-fighter-6",
+"title": "Street Fighter 6",
+"year": 2023,
+"franchise": "street-fighter",
+"rating": 92,
+"pop": 68,
+"genres": [
+"Fighting"
+],
+"tags": [
+"fighting",
+"competitive",
+"esports",
+"pvp",
+"arcade",
+"skill-ceiling",
+"multiplayer",
+"local-multiplayer",
+"stylish",
+"tutorial-rich"
+],
+"blurb": "The most welcoming fighting game ever made, with genuine depth underneath."
+},
+{
+"id": "borderlands-3",
+"title": "Borderlands 3",
+"year": 2019,
+"franchise": "borderlands",
+"rating": 81,
+"pop": 67,
+"genres": [
+"Shooter",
+"RPG"
+],
+"tags": [
+"looter-shooter",
+"fps",
+"first-person",
+"co-op",
+"comedy",
+"sci-fi",
+"loot",
+"progression",
+"cel-shaded",
+"pve"
+],
+"blurb": "A billion guns and a co-op loop that turns numbers going up into a lifestyle."
+},
+{
+"id": "nier-automata",
+"title": "NieR: Automata",
+"year": 2017,
+"franchise": "nier",
+"rating": 88,
+"pop": 67,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"action-rpg",
+"anime",
+"story-rich",
+"emotional",
+"hack-and-slash",
+"philosophical",
+"unique",
+"third-person",
+"soundtrack",
+"cult-classic"
+],
+"blurb": "Play it to the real ending. It uses the medium in ways nothing else does."
+},
+{
+"id": "deep-rock",
+"title": "Deep Rock Galactic",
+"year": 2020,
+"franchise": "deep-rock",
+"rating": 85,
+"pop": 66,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"co-op",
+"procedural",
+"sci-fi",
+"destructible",
+"teamwork",
+"progression",
+"pve",
+"comedy"
+],
+"blurb": "Space dwarves mine procedural caves. Rock and stone, genuinely one of the best co-op games."
+},
+{
+"id": "divinity-2",
+"title": "Divinity: Original Sin 2",
+"year": 2017,
+"franchise": "divinity",
+"rating": 93,
+"pop": 66,
+"genres": [
+"RPG"
+],
+"tags": [
+"rpg",
+"turn-based",
+"tactics",
+"co-op",
+"fantasy",
+"isometric",
+"narrative-choices",
+"long",
+"replayable",
+"deep-systems"
+],
+"blurb": "Elemental chaos and systemic sandbox combat. Best played with a scheming friend."
+},
+{
+"id": "silent-hill-2-remake",
+"title": "Silent Hill 2",
+"year": 2024,
+"franchise": "silent-hill",
+"rating": 86,
+"pop": 66,
+"genres": [
+"Horror"
+],
+"tags": [
+"horror",
+"psychological",
+"story-rich",
+"atmospheric",
+"third-person",
+"survival",
+"tense",
+"emotional",
+"remake",
+"slow-paced"
+],
+"blurb": "Psychological horror about grief, remade with care. Heavy in the best way."
+},
+{
+"id": "civ-7",
+"title": "Sid Meier's Civilization VII",
+"year": 2025,
+"franchise": "civilization",
+"rating": 81,
+"pop": 66,
+"genres": [
+"Strategy"
+],
+"tags": [
+"strategy",
+"turn-based",
+"historical",
+"4x",
+"long",
+"replayable",
+"deep-systems",
+"singleplayer",
+"addictive",
+"empire"
+],
+"blurb": "One more turn. It's 4am. You know exactly what this game is."
+},
+{
+"id": "celeste",
+"title": "Celeste",
+"year": 2018,
+"franchise": "celeste",
+"rating": 91,
+"pop": 66,
+"genres": [
+"Platformer"
+],
+"tags": [
+"platformer",
+"2d",
+"difficult",
+"pixel-art",
+"emotional",
+"indie",
+"precision",
+"short",
+"soundtrack",
+"accessibility"
+],
+"blurb": "A hard platformer about anxiety, with the kindest assist options in the business."
+},
+{
+"id": "it-takes-two",
+"title": "It Takes Two",
+"year": 2021,
+"franchise": "it-takes-two",
+"rating": 88,
+"pop": 66,
+"genres": [
+"Platformer"
+],
+"tags": [
+"co-op",
+"platformer",
+"local-multiplayer",
+"story-rich",
+"family-friendly",
+"creative",
+"charming",
+"linear",
+"couch-co-op",
+"varied"
+],
+"blurb": "Mandatory two-player. Every level introduces a brand new mechanic and then drops it."
+},
+{
+"id": "undertale",
+"title": "Undertale",
+"year": 2015,
+"franchise": "undertale",
+"rating": 92,
+"pop": 66,
+"genres": [
+"RPG"
+],
+"tags": [
+"rpg",
+"story-rich",
+"emotional",
+"pixel-art",
+"unique",
+"indie",
+"no-combat",
+"soundtrack",
+"short",
+"cult-classic"
+],
+"blurb": "You don't have to kill anything. It remembers what you do."
+},
+{
+"id": "fall-guys",
+"title": "Fall Guys",
+"year": 2020,
+"franchise": "fall-guys",
+"rating": 78,
+"pop": 66,
+"genres": [
+"Party"
+],
+"tags": [
+"party",
+"platformer",
+"multiplayer",
+"f2p",
+"family-friendly",
+"arcade",
+"chaotic",
+"seasonal",
+"short-sessions",
+"charming"
+],
+"blurb": "Sixty beans, one crown, endless indignity. Wonderfully silly."
+},
+{
+"id": "warframe",
+"title": "Warframe",
+"year": 2013,
+"franchise": "warframe",
+"rating": 82,
+"pop": 66,
+"genres": [
+"Shooter",
+"Action"
+],
+"tags": [
+"looter-shooter",
+"third-person",
+"f2p",
+"co-op",
+"sci-fi",
+"grindy",
+"fast-paced",
+"progression",
+"live-service",
+"pve"
+],
+"blurb": "Space ninja power fantasy. Free, enormous, and impossible to explain to newcomers."
+},
+{
+"id": "factorio",
+"title": "Factorio",
+"year": 2020,
+"franchise": "factorio",
+"rating": 90,
+"pop": 64,
+"genres": [
+"Simulation"
+],
+"tags": [
+"management",
+"automation",
+"base-building",
+"deep-systems",
+"addictive",
+"sandbox",
+"isometric",
+"long",
+"optimization",
+"co-op"
+],
+"blurb": "The factory must grow. Genuinely one of the most addictive games ever built."
+},
+{
+"id": "football-manager-25",
+"title": "Football Manager 2024",
+"year": 2023,
+"franchise": "football-manager",
+"rating": 85,
+"pop": 64,
+"genres": [
+"Simulation",
+"Sports"
+],
+"tags": [
+"management",
+"football",
+"sports",
+"simulation",
+"deep-systems",
+"long",
+"addictive",
+"spreadsheet",
+"tactics",
+"singleplayer"
+],
+"blurb": "A spreadsheet that will make you feel real emotions about a Norwegian left-back."
+},
+{
+"id": "dead-cells",
+"title": "Dead Cells",
+"year": 2018,
+"franchise": "dead-cells",
+"rating": 89,
+"pop": 64,
+"genres": [
+"Roguelike"
+],
+"tags": [
+"roguelike",
+"metroidvania",
+"2d",
+"difficult",
+"pixel-art",
+"replayable",
+"indie",
+"fast-paced",
+"combat-focused",
+"progression"
+],
+"blurb": "Buttery combat and short runs. The perfect 'one more go' game."
+},
+{
+"id": "slay-the-spire-2",
+"title": "Slay the Spire",
+"year": 2019,
+"franchise": "slay-the-spire",
+"rating": 89,
+"pop": 64,
+"genres": [
+"Roguelike"
+],
+"tags": [
+"deck-building",
+"card-game",
+"roguelike",
+"turn-based",
+"replayable",
+"indie",
+"strategy",
+"addictive",
+"short-sessions",
+"difficult"
+],
+"blurb": "The deckbuilder that spawned a genre. Every run is a puzzle you build yourself."
+},
+{
+"id": "tekken-8",
+"title": "Tekken 8",
+"year": 2024,
+"franchise": "tekken",
+"rating": 90,
+"pop": 64,
+"genres": [
+"Fighting"
+],
+"tags": [
+"fighting",
+"competitive",
+"esports",
+"pvp",
+"skill-ceiling",
+"multiplayer",
+"local-multiplayer",
+"3d",
+"aggressive",
+"story-rich"
+],
+"blurb": "Aggression is rewarded. Also there is a bear and a man who is also a dinosaur."
+},
+{
+"id": "eso",
+"title": "The Elder Scrolls Online",
+"year": 2014,
+"franchise": "elder-scrolls",
+"rating": 78,
+"pop": 63,
+"genres": [
+"MMO"
+],
+"tags": [
+"mmo",
+"fantasy",
+"open-world",
+"pve",
+"exploration",
+"story-rich",
+"social",
+"long",
+"first-person",
+"progression"
+],
+"blurb": "Skyrim-shaped MMO you can genuinely play solo. Zone stories are the highlight."
+},
+{
+"id": "left4dead-2",
+"title": "Left 4 Dead 2",
+"year": 2009,
+"franchise": "left4dead",
+"rating": 89,
+"pop": 62,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"co-op",
+"zombie",
+"horror",
+"teamwork",
+"replayable",
+"mod-support",
+"pve",
+"arcade"
+],
+"blurb": "Four survivors, a horde, and the most quietly brilliant AI director in games."
+},
+{
+"id": "death-stranding-2",
+"title": "Death Stranding 2: On the Beach",
+"year": 2025,
+"franchise": "death-stranding",
+"rating": 88,
+"pop": 62,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"open-world",
+"atmospheric",
+"story-rich",
+"unique",
+"exploration",
+"third-person",
+"slow-paced",
+"emotional",
+"soundtrack",
+"weird"
+],
+"blurb": "A delivery sim about connection. Either the most boring or most moving thing you'll play."
+},
+{
+"id": "dead-space-remake",
+"title": "Dead Space",
+"year": 2023,
+"franchise": "dead-space",
+"rating": 89,
+"pop": 62,
+"genres": [
+"Horror"
+],
+"tags": [
+"horror",
+"sci-fi",
+"space",
+"atmospheric",
+"third-person",
+"survival",
+"tense",
+"dismemberment",
+"remake",
+"claustrophobic"
+],
+"blurb": "Sound design that will make you check behind you. Still the best sci-fi horror."
+},
+{
+"id": "the-forest",
+"title": "Sons of the Forest",
+"year": 2024,
+"franchise": "the-forest",
+"rating": 80,
+"pop": 62,
+"genres": [
+"Survival"
+],
+"tags": [
+"survival",
+"co-op",
+"crafting",
+"horror",
+"first-person",
+"base-building",
+"exploration",
+"tense",
+"cannibals",
+"procedural"
+],
+"blurb": "Build a fortress before the cannibals find it. Kelvin is doing his best."
+},
+{
+"id": "total-war-warhammer-3",
+"title": "Total War: Warhammer III",
+"year": 2022,
+"franchise": "total-war",
+"rating": 86,
+"pop": 62,
+"genres": [
+"Strategy"
+],
+"tags": [
+"strategy",
+"turn-based",
+"tactics",
+"fantasy",
+"large-scale",
+"deep-systems",
+"long",
+"replayable",
+"real-time-battles",
+"empire"
+],
+"blurb": "Turn-based empire building plus thousands of models colliding in real time."
+},
+{
+"id": "rimworld",
+"title": "RimWorld",
+"year": 2018,
+"franchise": "rimworld",
+"rating": 87,
+"pop": 62,
+"genres": [
+"Simulation"
+],
+"tags": [
+"management",
+"colony-sim",
+"emergent",
+"sandbox",
+"replayable",
+"mod-support",
+"isometric",
+"storytelling",
+"difficult",
+"long"
+],
+"blurb": "A story generator disguised as a colony sim. Everything that goes wrong is a story."
+},
+{
+"id": "disco-elysium",
+"title": "Disco Elysium",
+"year": 2019,
+"franchise": "disco-elysium",
+"rating": 97,
+"pop": 62,
+"genres": [
+"RPG"
+],
+"tags": [
+"rpg",
+"story-rich",
+"narrative-choices",
+"isometric",
+"detective",
+"unique",
+"no-combat",
+"writing",
+"mature",
+"cult-classic"
+],
+"blurb": "The best writing in any video game. You investigate a murder and also yourself."
+},
+{
+"id": "mk1",
+"title": "Mortal Kombat 1",
+"year": 2023,
+"franchise": "mortal-kombat",
+"rating": 82,
+"pop": 62,
+"genres": [
+"Fighting"
+],
+"tags": [
+"fighting",
+"gritty",
+"competitive",
+"story-rich",
+"pvp",
+"mature",
+"cinematic",
+"local-multiplayer",
+"multiplayer",
+"gore"
+],
+"blurb": "Absurd gore, a surprisingly good story mode, and tag-team assists."
+},
+{
+"id": "gran-turismo-7",
+"title": "Gran Turismo 7",
+"year": 2022,
+"franchise": "gran-turismo",
+"rating": 87,
+"pop": 62,
+"genres": [
+"Racing"
+],
+"tags": [
+"racing",
+"driving",
+"simulation",
+"realistic",
+"competitive",
+"progression",
+"cars",
+"multiplayer",
+"skill-ceiling",
+"beautiful"
+],
+"blurb": "A love letter to car culture. The physics reward patience over aggression."
+},
+{
+"id": "dave-the-diver",
+"title": "Dave the Diver",
+"year": 2023,
+"franchise": "dave-the-diver",
+"rating": 90,
+"pop": 62,
+"genres": [
+"Simulation"
+],
+"tags": [
+"cozy",
+"management",
+"pixel-art",
+"charming",
+"indie",
+"exploration",
+"varied",
+"chill",
+"progression",
+"addictive"
+],
+"blurb": "Dive by day, run a sushi restaurant by night. Should not work, absolutely does."
+},
+{
+"id": "astro-bot",
+"title": "Astro Bot",
+"year": 2024,
+"franchise": "astro-bot",
+"rating": 94,
+"pop": 62,
+"genres": [
+"Platformer"
+],
+"tags": [
+"platformer",
+"3d",
+"family-friendly",
+"charming",
+"joyful",
+"varied",
+"chill",
+"creative",
+"short",
+"singleplayer"
+],
+"blurb": "Pure joy, start to finish. The most purely delightful platformer since Odyssey."
+},
+{
+"id": "control",
+"title": "Control",
+"year": 2019,
+"franchise": "remedy",
+"rating": 85,
+"pop": 60,
+"genres": [
+"Action Adventure"
+],
+"tags": [
+"action-adventure",
+"supernatural",
+"third-person",
+"atmospheric",
+"mystery",
+"weird",
+"combat-focused",
+"physics",
+"metroidvania",
+"unique"
+],
+"blurb": "Telekinesis in a shifting brutalist office building. Throw everything at everything."
+},
+{
+"id": "dayz",
+"title": "DayZ",
+"year": 2018,
+"franchise": "dayz",
+"rating": 72,
+"pop": 60,
+"genres": [
+"Survival"
+],
+"tags": [
+"survival",
+"zombie",
+"multiplayer",
+"hardcore",
+"realistic",
+"first-person",
+"pvp",
+"tense",
+"slow-paced",
+"emergent"
+],
+"blurb": "Long stretches of nothing punctuated by the most tense encounters in gaming."
+},
+{
+"id": "xcom-2",
+"title": "XCOM 2",
+"year": 2016,
+"franchise": "xcom",
+"rating": 88,
+"pop": 60,
+"genres": [
+"Strategy"
+],
+"tags": [
+"tactics",
+"turn-based",
+"sci-fi",
+"difficult",
+"strategy",
+"permadeath",
+"tense",
+"replayable",
+"isometric",
+"management"
+],
+"blurb": "95% hit chance means nothing. You will name your soldiers and you will mourn them."
+},
+{
+"id": "hunt-showdown",
+"title": "Hunt: Showdown 1896",
+"year": 2019,
+"franchise": "hunt",
+"rating": 81,
+"pop": 58,
+"genres": [
+"Shooter"
+],
+"tags": [
+"fps",
+"first-person",
+"extraction",
+"pvp",
+"pve",
+"horror",
+"tense",
+"atmospheric",
+"realistic",
+"western"
+],
+"blurb": "Bayou monster hunting where every distant gunshot means another team heard you too."
+},
+{
+"id": "dragon-age-veilguard",
+"title": "Dragon Age: The Veilguard",
+"year": 2024,
+"franchise": "dragon-age",
+"rating": 78,
+"pop": 58,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"action-rpg",
+"fantasy",
+"story-rich",
+"companions",
+"third-person",
+"narrative-choices",
+"combat-focused",
+"cinematic",
+"linear",
+"aaa"
+],
+"blurb": "Slick action combat and a companion cast that carries the whole thing."
+},
+{
+"id": "alan-wake-2",
+"title": "Alan Wake 2",
+"year": 2023,
+"franchise": "remedy",
+"rating": 89,
+"pop": 58,
+"genres": [
+"Horror"
+],
+"tags": [
+"horror",
+"story-rich",
+"atmospheric",
+"third-person",
+"mystery",
+"unique",
+"survival-horror",
+"weird",
+"cinematic",
+"tense"
+],
+"blurb": "A survival horror art film. Genuinely unlike anything else, and the musical level is unforgettable."
+},
+{
+"id": "grounded",
+"title": "Grounded",
+"year": 2022,
+"franchise": "grounded",
+"rating": 83,
+"pop": 58,
+"genres": [
+"Survival"
+],
+"tags": [
+"survival",
+"co-op",
+"crafting",
+"base-building",
+"first-person",
+"exploration",
+"family-friendly",
+"progression",
+"bugs",
+"charming"
+],
+"blurb": "Honey I Shrunk the Kids as survival. Arachnophobia slider is a genuinely kind touch."
+},
+{
+"id": "ark-ascended",
+"title": "ARK: Survival Ascended",
+"year": 2023,
+"franchise": "ark",
+"rating": 70,
+"pop": 58,
+"genres": [
+"Survival"
+],
+"tags": [
+"survival",
+"dinosaurs",
+"crafting",
+"multiplayer",
+"base-building",
+"grindy",
+"pvp",
+"third-person",
+"tribes",
+"long"
+],
+"blurb": "Tame a dinosaur, build a base, lose it all to a raid. Enormous time sink."
+},
+{
+"id": "starcraft-2",
+"title": "StarCraft II",
+"year": 2010,
+"franchise": "starcraft",
+"rating": 93,
+"pop": 58,
+"genres": [
+"Strategy"
+],
+"tags": [
+"rts",
+"sci-fi",
+"esports",
+"competitive",
+"fast-paced",
+"skill-ceiling",
+"multiplayer",
+"f2p",
+"campaign",
+"space"
+],
+"blurb": "The most demanding competitive game ever made. The campaigns are great too."
+},
+{
+"id": "risk-of-rain-2",
+"title": "Risk of Rain 2",
+"year": 2020,
+"franchise": "risk-of-rain",
+"rating": 85,
+"pop": 58,
+"genres": [
+"Roguelike"
+],
+"tags": [
+"roguelike",
+"third-person",
+"co-op",
+"replayable",
+"indie",
+"numbers-go-up",
+"fast-paced",
+"progression",
+"multiplayer",
+"difficult"
+],
+"blurb": "Stack items until you break physics. Best played with three friends."
+},
+{
+"id": "outer-wilds",
+"title": "Outer Wilds",
+"year": 2019,
+"franchise": "outer-wilds",
+"rating": 89,
+"pop": 58,
+"genres": [
+"Adventure"
+],
+"tags": [
+"exploration",
+"mystery",
+"space",
+"puzzle",
+"unique",
+"atmospheric",
+"indie",
+"no-combat",
+"emotional",
+"one-playthrough"
+],
+"blurb": "A 22-minute time loop and a solar system of secrets. Do not read anything about it."
+},
+{
+"id": "splatoon-3",
+"title": "Splatoon 3",
+"year": 2022,
+"franchise": "splatoon",
+"rating": 83,
+"pop": 58,
+"genres": [
+"Shooter"
+],
+"tags": [
+"third-person",
+"multiplayer",
+"competitive",
+"cartoon",
+"family-friendly",
+"pvp",
+"teamwork",
+"stylish",
+"seasonal",
+"arcade"
+],
+"blurb": "Ink the floor, not the enemy. The most original shooter concept in years."
+},
+{
+"id": "lego-fortnite",
+"title": "LEGO Fortnite",
+"year": 2023,
+"franchise": "fortnite",
+"rating": 75,
+"pop": 58,
+"genres": [
+"Survival",
+"Sandbox"
+],
+"tags": [
+"survival",
+"crafting",
+"co-op",
+"base-building",
+"family-friendly",
+"sandbox",
+"cozy",
+"exploration",
+"charming",
+"f2p"
+],
+"blurb": "A surprisingly full survival crafting game bolted onto Fortnite."
+},
+{
+"id": "aoe-4",
+"title": "Age of Empires IV",
+"year": 2021,
+"franchise": "age-of-empires",
+"rating": 81,
+"pop": 56,
+"genres": [
+"Strategy"
+],
+"tags": [
+"rts",
+"strategy",
+"historical",
+"competitive",
+"multiplayer",
+"fast-paced",
+"base-building",
+"esports",
+"teamwork",
+"campaign"
+],
+"blurb": "Classic RTS done right, with documentary campaigns that are actually worth watching."
+},
+{
+"id": "cities-skylines-2",
+"title": "Cities: Skylines II",
+"year": 2023,
+"franchise": "cities-skylines",
+"rating": 72,
+"pop": 56,
+"genres": [
+"Simulation"
+],
+"tags": [
+"city-builder",
+"management",
+"simulation",
+"relaxing",
+"sandbox",
+"deep-systems",
+"creative",
+"long",
+"isometric",
+"chill"
+],
+"blurb": "Traffic management as a lifestyle. Deeply calming until the sewage backs up."
+},
+{
+"id": "ck3",
+"title": "Crusader Kings III",
+"year": 2020,
+"franchise": "crusader-kings",
+"rating": 91,
+"pop": 56,
+"genres": [
+"Strategy"
+],
+"tags": [
+"strategy",
+"historical",
+"roleplay",
+"deep-systems",
+"emergent",
+"long",
+"empire",
+"storytelling",
+"medieval",
+"management"
+],
+"blurb": "Medieval dynasty roleplay where your heir is an idiot and it's your fault."
+},
+{
+"id": "cult-of-the-lamb",
+"title": "Cult of the Lamb",
+"year": 2022,
+"franchise": "cult-of-the-lamb",
+"rating": 82,
+"pop": 56,
+"genres": [
+"Roguelike"
+],
+"tags": [
+"roguelike",
+"management",
+"cozy",
+"cult",
+"indie",
+"charming",
+"progression",
+"isometric",
+"dark-comedy",
+"replayable"
+],
+"blurb": "Adorable animals, sinister cult management. The tonal clash is the whole joke."
+},
+{
+"id": "metroid-dread",
+"title": "Metroid Dread",
+"year": 2021,
+"franchise": "metroid",
+"rating": 88,
+"pop": 56,
+"genres": [
+"Metroidvania"
+],
+"tags": [
+"metroidvania",
+"2d",
+"sci-fi",
+"action",
+"difficult",
+"exploration",
+"atmospheric",
+"boss-rush",
+"tense",
+"singleplayer"
+],
+"blurb": "Tight, tense and fast. The best 2D Metroid since Super."
+},
+{
+"id": "lies-of-p",
+"title": "Lies of P",
+"year": 2023,
+"franchise": "lies-of-p",
+"rating": 80,
+"pop": 54,
+"genres": [
+"Action RPG"
+],
+"tags": [
+"souls-like",
+"action-rpg",
+"dark-fantasy",
+"difficult",
+"atmospheric",
+"third-person",
+"combat-focused",
+"story-rich",
+"boss-rush",
+"steampunk"
+],
+"blurb": "Pinocchio as a soulslike, and a shockingly confident one."
+},
+{
+"id": "stellaris",
+"title": "Stellaris",
+"year": 2016,
+"franchise": "stellaris",
+"rating": 81,
+"pop": 54,
+"genres": [
+"Strategy"
+],
+"tags": [
+"strategy",
+"4x",
+"space",
+"sci-fi",
+"deep-systems",
+"long",
+"empire",
+"emergent",
+"management",
+"replayable"
+],
+"blurb": "Build a galactic empire, then discover something worse lives on the rim."
+},
+{
+"id": "blue-prince",
+"title": "Blue Prince",
+"year": 2025,
+"franchise": "blue-prince",
+"rating": 90,
+"pop": 54,
+"genres": [
+"Puzzle"
+],
+"tags": [
+"puzzle",
+"roguelike",
+"mystery",
+"deduction",
+"indie",
+"atmospheric",
+"unique",
+"note-taking",
+"replayable",
+"first-person"
+],
+"blurb": "Draft rooms to build a mansion and uncover its secret. You'll need a notebook."
+},
+{
+"id": "outlast-trials",
+"title": "The Outlast Trials",
+"year": 2024,
+"franchise": "outlast",
+"rating": 78,
+"pop": 52,
+"genres": [
+"Horror"
+],
+"tags": [
+"horror",
+"co-op",
+"stealth",
+"first-person",
+"tense",
+"multiplayer",
+"gritty",
+"mature",
+"procedural",
+"chase"
+],
+"blurb": "Cold War human experiments as co-op horror. Relentlessly unpleasant, on purpose."
+},
+{
+"id": "papers-please",
+"title": "Papers, Please",
+"year": 2013,
+"franchise": "papers-please",
+"rating": 85,
+"pop": 52,
+"genres": [
+"Puzzle"
+],
+"tags": [
+"puzzle",
+"management",
+"unique",
+"moral-choices",
+"indie",
+"bleak",
+"short",
+"deduction",
+"bureaucracy",
+"replayable"
+],
+"blurb": "Glory to Arstotzka. Stamping passports has never been this morally exhausting."
+},
+{
+"id": "powerwash-sim",
+"title": "PowerWash Simulator",
+"year": 2022,
+"franchise": "powerwash",
+"rating": 78,
+"pop": 52,
+"genres": [
+"Simulation"
+],
+"tags": [
+"cozy",
+"relaxing",
+"chill",
+"simulation",
+"co-op",
+"first-person",
+"satisfying",
+"no-combat",
+"family-friendly",
+"podcast-game"
+],
+"blurb": "Clean dirty things. Astonishingly effective as stress relief."
+},
+{
+"id": "frostpunk-2",
+"title": "Frostpunk 2",
+"year": 2024,
+"franchise": "frostpunk",
+"rating": 81,
+"pop": 50,
+"genres": [
+"Simulation",
+"Strategy"
+],
+"tags": [
+"city-builder",
+"management",
+"survival",
+"post-apocalyptic",
+"moral-choices",
+"atmospheric",
+"difficult",
+"strategy",
+"bleak",
+"story-rich"
+],
+"blurb": "City building where every law you pass costs someone something. Bleak and brilliant."
+},
+{
+"id": "tunic",
+"title": "Tunic",
+"year": 2022,
+"franchise": "tunic",
+"rating": 85,
+"pop": 50,
+"genres": [
+"Adventure"
+],
+"tags": [
+"puzzle",
+"isometric",
+"charming",
+"indie",
+"exploration",
+"difficult",
+"mystery",
+"deduction",
+"zelda-like",
+"secrets"
+],
+"blurb": "A cute fox adventure hiding one of the cleverest puzzle games ever made."
+},
+{
+"id": "obra-dinn",
+"title": "Return of the Obra Dinn",
+"year": 2018,
+"franchise": "obra-dinn",
+"rating": 89,
+"pop": 48,
+"genres": [
+"Puzzle"
+],
+"tags": [
+"puzzle",
+"mystery",
+"detective",
+"unique",
+"indie",
+"no-combat",
+"deduction",
+"atmospheric",
+"short",
+"one-playthrough"
+],
+"blurb": "Deduce how sixty sailors died. The most satisfying detective work in games."
+},
+{
+"id": "assetto-corsa-evo",
+"title": "Assetto Corsa Competizione",
+"year": 2019,
+"franchise": "assetto-corsa",
+"rating": 84,
+"pop": 48,
+"genres": [
+"Racing"
+],
+"tags": [
+"racing",
+"simulation",
+"realistic",
+"hardcore",
+"competitive",
+"skill-ceiling",
+"esports",
+"driving",
+"wheel-recommended",
+"multiplayer"
+],
+"blurb": "The sim racer's sim racer. Bring a wheel or don't bother."
+},
+{
+"id": "a-short-hike",
+"title": "A Short Hike",
+"year": 2019,
+"franchise": "a-short-hike",
+"rating": 88,
+"pop": 48,
+"genres": [
+"Adventure"
+],
+"tags": [
+"cozy",
+"relaxing",
+"exploration",
+"chill",
+"indie",
+"short",
+"charming",
+"no-combat",
+"wholesome",
+"soundtrack"
+],
+"blurb": "Climb a mountain, chat to some animals, be done in ninety minutes. Perfect."
+},
+{
+"id": "spiritfarer",
+"title": "Spiritfarer",
+"year": 2020,
+"franchise": "spiritfarer",
+"rating": 84,
+"pop": 48,
+"genres": [
+"Simulation"
+],
+"tags": [
+"cozy",
+"relaxing",
+"emotional",
+"management",
+"indie",
+"charming",
+"hand-drawn",
+"wholesome",
+"no-combat",
+"story-rich"
+],
+"blurb": "A cozy game about dying. You'll cry, and the boat is lovely."
+},
+{
+"id": "unpacking",
+"title": "Unpacking",
+"year": 2021,
+"franchise": "unpacking",
+"rating": 83,
+"pop": 46,
+"genres": [
+"Puzzle"
+],
+"tags": [
+"cozy",
+"relaxing",
+"puzzle",
+"chill",
+"indie",
+"short",
+"wholesome",
+"no-combat",
+"pixel-art",
+"emotional"
+],
+"blurb": "Unpack boxes, learn a whole life story from the objects. Quietly devastating."
+},
+{
+"id": "baba-is-you",
+"title": "Baba Is You",
+"year": 2019,
+"franchise": "baba",
+"rating": 87,
+"pop": 44,
+"genres": [
+"Puzzle"
+],
+"tags": [
+"puzzle",
+"difficult",
+"indie",
+"2d",
+"unique",
+"brain-melting",
+"short-sessions",
+"minimalist",
+"no-combat",
+"clever"
+],
+"blurb": "You rewrite the rules of each level. Will make you feel stupid then brilliant."
+},
+{
+"id": "slime-rancher-2",
+"title": "Slime Rancher 2",
+"year": 2022,
+"franchise": "slime-rancher",
+"rating": 78,
+"pop": 44,
+"genres": [
+"Simulation"
+],
+"tags": [
+"cozy",
+"relaxing",
+"creature-collector",
+"first-person",
+"exploration",
+"chill",
+"family-friendly",
+"charming",
+"crafting",
+"wholesome"
+],
+"blurb": "Vacuum up adorable slimes on a pastel alien world. Genuinely calming."
+},
+{
+"id": "coral-island",
+"title": "Coral Island",
+"year": 2023,
+"franchise": "coral-island",
+"rating": 80,
+"pop": 44,
+"genres": [
+"Simulation"
+],
+"tags": [
+"cozy",
+"farming",
+"relaxing",
+"life-sim",
+"chill",
+"co-op",
+"charming",
+"long",
+"crafting",
+"wholesome"
+],
+"blurb": "Stardew with better graphics and a coral reef to restore. Very comfortable."
+},
+{
+"id": "dorfromantik",
+"title": "Dorfromantik",
+"year": 2022,
+"franchise": "dorfromantik",
+"rating": 83,
+"pop": 40,
+"genres": [
+"Puzzle"
+],
+"tags": [
+"cozy",
+"relaxing",
+"puzzle",
+"chill",
+"indie",
+"city-builder",
+"minimalist",
+"no-combat",
+"short-sessions",
+"beautiful"
+],
+"blurb": "Place tiles, build a peaceful landscape. A puzzle game that never rushes you."
+},
+{
+"id": "chants-of-sennaar",
+"title": "Chants of Sennaar",
+"year": 2023,
+"franchise": "chants",
+"rating": 83,
+"pop": 38,
+"genres": [
+"Puzzle"
+],
+"tags": [
+"puzzle",
+"deduction",
+"indie",
+"beautiful",
+"no-combat",
+"mystery",
+"language",
+"atmospheric",
+"short",
+"clever"
+],
+"blurb": "Decipher invented languages by context alone. Makes you feel like a genius."
+}
+]

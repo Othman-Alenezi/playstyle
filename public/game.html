@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description" content="Reviews from players who share your taste." />
+  <title>Game — Playstyle</title>
+  <script src="/js/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="header__inner">
+      <a class="logo" href="/" aria-label="Playstyle home">
+        <span class="logo__mark"></span><span>Playstyle</span>
+      </a>
+      <div class="header__spacer"></div>
+      <nav class="header__nav" id="site-nav"></nav>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <div id="gamehead"></div>
+
+    <section aria-labelledby="reviews-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="reviews-heading">What players say</h2>
+          <p id="reviews-sub">Reviews are ranked by how closely each player's taste matches yours.</p>
+        </div>
+      </div>
+
+      <div id="split" class="split"></div>
+      <div id="compose"></div>
+
+      <div class="sortbar" id="sortbar" hidden>
+        <span class="sortbar__label" id="sort-label">Sort by</span>
+        <div role="group" aria-labelledby="sort-label" id="sort-options"></div>
+      </div>
+
+      <div id="reviews" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/game.js"></script>
+</body>
+</html>

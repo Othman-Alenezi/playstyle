@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description" content="Community hubs for the games you love." />
+  <title>Fandoms — Playstyle</title>
+  <script src="/js/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="header__inner">
+      <a class="logo" href="/" aria-label="Playstyle home">
+        <span class="logo__mark"></span><span>Playstyle</span>
+      </a>
+      <div class="header__spacer"></div>
+      <nav class="header__nav" id="site-nav"></nav>
+    </div>
+  </header>
+  <main id="main" class="page">
+    <div class="section-head section-head--page">
+      <div>
+        <h1 class="feed__title">Fandoms</h1>
+        <p id="hubs-sub">Community hubs, one per franchise.</p>
+      </div>
+    </div>
+
+    <section id="mine-section" hidden aria-labelledby="mine-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="mine-heading">Your fandoms</h2>
+          <p>Based on the games you love, plus any hub you have joined.</p>
+        </div>
+      </div>
+      <div class="hubgrid" id="mine"></div>
+    </section>
+
+    <section aria-labelledby="active-heading" class="hubs-section">
+      <div class="section-head">
+        <div>
+          <h2 id="active-heading">Where people are talking</h2>
+          <p>Hubs with active discussion right now.</p>
+        </div>
+      </div>
+      <div class="hubgrid" id="active"></div>
+    </section>
+
+    <section aria-labelledby="browse-heading" class="hubs-section">
+      <div class="section-head">
+        <div>
+          <h2 id="browse-heading">Browse</h2>
+          <p id="browse-sub">Every franchise has a hub.</p>
+        </div>
+      </div>
+      <div class="hubgrid" id="browse"></div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/fandoms.js"></script>
+</body>
+</html>

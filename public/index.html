@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description" content="Tell us five games you love. Get recommendations that show their reasoning, plus reviews from players who share your taste." />
+  <title>Playstyle — game recommendations that explain themselves</title>
+  <script src="/js/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+    <header class="header" id="site-header">
+      <div class="header__inner">
+        <a class="logo" href="/" aria-label="Playstyle home">
+          <span class="logo__mark"></span><span>Playstyle</span>
+        </a>
+        <div class="header__spacer"></div>
+        <nav class="header__nav" id="site-nav">
+          <a class="btn btn--ghost" href="/fandoms">Fandoms</a>
+          <a class="btn btn--ghost" href="/auth">Sign in</a>
+          <a class="btn btn--primary" href="/auth?mode=signup">Create account</a>
+        </nav>
+      </div>
+    </header>
+  <main id="main">
+    <section class="hero">
+      <div class="page"><div class="hero__inner">
+        <span class="hero__eyebrow">No account needed to start</span>
+        <h1>Stop scrolling stores. <em>Find your next game.</em></h1>
+        <p class="hero__sub">
+          Pick a few games you love and Playstyle builds a taste profile from how they
+          actually play — then recommends games that match it, and shows you exactly why.
+        </p>
+        <div class="hero__proof">
+          <div><strong id="stat-games">148</strong> games in the catalog</div>
+          <div><strong id="stat-tags">240</strong> playstyle signals</div>
+          <div><strong>20s</strong> to your first match</div>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="features page" aria-labelledby="features-heading">
+      <h2 class="sr-only" id="features-heading">What Playstyle does</h2>
+      <div class="features__grid">
+        <article class="feature">
+          <span class="feature__icon" aria-hidden="true">◎</span>
+          <h3>Recommendations that explain themselves</h3>
+          <p>A profile built from how games actually play — pace, difficulty, co-op,
+             story weight — not just genre labels. Every match tells you why.</p>
+          <a class="feature__link" href="#quiz-heading">Build my profile ↓</a>
+        </article>
+        <article class="feature">
+          <span class="feature__icon" aria-hidden="true">✦</span>
+          <h3>Reviews from players like you</h3>
+          <p>Every review carries the reviewer's taste and how closely it matches
+             yours. Elden Ring is 25% recommended overall — but not to everyone.</p>
+          <a class="feature__link" href="/game/elden-ring">See a game page →</a>
+        </article>
+        <article class="feature">
+          <span class="feature__icon" aria-hidden="true">◇</span>
+          <h3>A fandom hub for every franchise</h3>
+          <p>Somewhere to argue about loadouts, boss order and patch notes with
+             people who play the same things you do.</p>
+          <a class="feature__link" href="/fandoms">Browse fandoms →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz page" aria-labelledby="quiz-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="quiz-heading">Which of these do you love?</h2>
+          <p>Pick at least three. The more you pick, the sharper your profile.</p>
+        </div>
+      </div>
+
+      <div class="quiz__bar">
+        <div class="quiz__search">
+          <label class="sr-only" for="quiz-search">Search games</label>
+          <input class="input" id="quiz-search" type="search" placeholder="Search 148 games…" autocomplete="off" />
+        </div>
+        <div class="quiz__filters" id="quiz-filters" role="group" aria-label="Filter by genre"></div>
+      </div>
+
+      <div class="quiz__grid" id="quiz-grid" aria-live="polite"></div>
+      <p class="empty__body" id="quiz-none" hidden>Nothing matches that search. Try a different name.</p>
+    </section>
+
+    <section class="preview page" id="preview" hidden aria-labelledby="preview-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="preview-heading">Here's what we'd recommend</h2>
+          <p>Based on your picks. Nothing saved yet.</p>
+        </div>
+        <button class="btn" type="button" id="preview-edit">Change my picks</button>
+      </div>
+      <div class="app-layout">
+        <div class="recs" id="preview-recs"></div>
+        <aside class="sidebar">
+          <div class="sidebar__card">
+            <h3 class="sidebar__title">Your taste profile</h3>
+            <div class="bars" id="preview-bars"></div>
+          </div>
+        </aside>
+      </div>
+      <div class="preview__gate">
+        <h3 class="gate__title">Save this profile and get the full list</h3>
+        <p class="empty__body">
+          Create a free account to keep your profile, rate recommendations so they improve,
+          and read reviews from players whose taste matches yours.
+        </p>
+        <a class="btn btn--primary btn--lg" href="/auth?mode=signup" id="preview-cta">Save my profile — it's free</a>
+      </div>
+    </section>
+  </main>
+
+  <div class="dock" id="dock">
+    <div class="dock__inner">
+      <p class="dock__count" id="dock-count"><strong>0</strong> picked</p>
+      <button class="btn btn--ghost" type="button" id="dock-clear">Clear</button>
+      <button class="btn btn--primary btn--lg" type="button" id="dock-go">Show my matches</button>
+    </div>
+  </div>
+
+  <script type="module" src="/js/landing.js"></script>
+</body>
+</html>
