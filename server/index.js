@@ -25,6 +25,15 @@ const ORIGINS = (process.env.ALLOWED_ORIGINS || `http://localhost:${PORT}`)
 
 const catalogHas = (id) => byId.has(id);
 
+// Logged before anything else touches the database: on a serverless host the
+// runtime logs are the only place to see which backend was selected, and
+// "sqlite" here means DATABASE_URL never reached the process.
+{
+  const store = storageSummary();
+  console.log(`[boot] storage=${store.backend} durable=${store.durable}`
+    + ` DATABASE_URL=${process.env.DATABASE_URL ? 'present' : 'absent'}`);
+}
+
 await migrate();
 
 /**
