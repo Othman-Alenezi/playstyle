@@ -7,6 +7,7 @@ import { dirname, join } from 'node:path';
 import { migrate, Sessions, Users, IS_EPHEMERAL, storageSummary } from './lib/db.js';
 import { attachUser, verifyOrigin } from './middleware.js';
 import { sessionInfo } from './lib/auth.js';
+import { clientConfig, SUPABASE_URL, SUPABASE_ENABLED } from './lib/supabase.js';
 import authRoutes from './routes/auth.js';
 import gameRoutes from './routes/games.js';
 import tasteRoutes from './routes/taste.js';
@@ -61,7 +62,8 @@ app.use(helmet({
         'https://upload.wikimedia.org',
         'https://thumb.wikimedia.org',
       ],
-      connectSrc: ["'self'"],
+      // The browser authenticates against Supabase directly.
+      connectSrc: SUPABASE_ENABLED ? ["'self'", SUPABASE_URL] : ["'self'"],
       objectSrc: ["'none'"],
       frameAncestors: ["'none'"],
       baseUri: ["'self'"],
@@ -84,12 +86,23 @@ app.use('/api', tasteRoutes);
 app.use('/api', reviewRoutes);
 app.use('/api', hubRoutes);
 
+/**
+ * Public configuration for the browser. Only values that are safe to publish:
+ * the project URL and the publishable key, which exists to be embedded in
+ * client code. No secret is served here.
+ */
+app.get('/api/config', (_req, res) => {
+  res.set('Cache-Control', 'public, max-age=300');
+  res.json({ supabase: clientConfig() });
+});
+
 app.get('/api/health', (_req, res) => res.json({
   ok: true, catalog: stats, uptime: process.uptime(),
   // Which session strategy is active, and where its signing key came from.
   // If keySource is ever "dev-default" on a deployment, sessions are broken.
   session: sessionInfo(),
   storage: storageSummary(),
+  auth: { supabase: SUPABASE_ENABLED },
   // Which configuration actually reaches the running process. Names and
   // presence only -- never values. Added because the deployment reported the
   // fallback signing key while the dashboard showed SESSION_SECRET as set,

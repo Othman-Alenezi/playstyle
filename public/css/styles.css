@@ -350,3 +350,10 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .section-head h2 { font-size: var(--text-xl); }
 .section-head p { color: var(--muted); font-size: var(--text-sm); margin-top: 2px; }
+
+/* An informational message reuses the error slot's layout, not its colour. */
+.form__error--info {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--accent);
+}

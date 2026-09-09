@@ -6,6 +6,9 @@ import {
   isRebuiltAccount,
 } from '../lib/auth.js';
 import { validateSignup, validateLogin } from '../lib/validate.js';
+import {
+  verifyAccessToken, usernameFrom, EXTERNAL_AUTH_MARKER, clientConfig,
+} from '../lib/supabase.js';
 import { rateLimit, requireAuth } from '../middleware.js';
 import { byId } from '../lib/catalog.js';
 
@@ -100,6 +103,50 @@ router.post('/login', loginLimit, async (req, res, next) => {
     const seeded = await applySeed(user.id, req.body?.seed);
     await startSession(res, user.id, req.get('user-agent'));
     res.json({ user: publicUser(await Users.byId(user.id)), seeded });
+  } catch (err) { next(err); }
+});
+
+/**
+ * Exchange a verified Supabase access token for one of this app's sessions.
+ *
+ * The browser signs up or signs in against Supabase directly, so no password
+ * ever reaches this server. We verify the token against Supabase's public
+ * JWKS, mirror the identity into the local users table (every other table
+ * has a foreign key to it), and then issue the same httpOnly cookie the rest
+ * of the app already understands. The Supabase token is not stored anywhere.
+ */
+router.post('/supabase', loginLimit, async (req, res, next) => {
+  try {
+    let claims;
+    try {
+      claims = await verifyAccessToken(req.body?.access_token);
+    } catch (err) {
+      return res.status(401).json({ error: 'bad_token', message: `Could not verify that sign-in: ${err.message}` });
+    }
+
+    const id = claims.sub;
+    const email = String(claims.email ?? '').toLowerCase();
+    let user = await Users.byId(id);
+
+    if (!user) {
+      // Usernames are unique locally; a collision must not block a sign-in.
+      let username = usernameFrom(claims);
+      if (await Users.byUsername(username)) {
+        username = `${username}_${String(id).replace(/-/g, '').slice(0, 4)}`.slice(0, 20);
+      }
+      await Users.create({
+        id,
+        email: email || `${id}@supabase.local`,
+        username,
+        password_hash: EXTERNAL_AUTH_MARKER,
+        created_at: Date.now(),
+      });
+      user = await Users.byId(id);
+    }
+
+    const seeded = await applySeed(user.id, req.body?.seed);
+    await startSession(res, user.id, req.get('user-agent'));
+    res.json({ user: { ...publicUser(user), onboarded: !!user.onboarded || seeded > 0 }, seeded });
   } catch (err) { next(err); }
 });
 

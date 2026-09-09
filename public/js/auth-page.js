@@ -4,6 +4,7 @@
  * moment they start fixing it.
  */
 import { api, ApiError } from './api.js';
+import * as supa from './supabase-auth.js';
 import { picks } from './store.js';
 import { $, $$, el, render, themeToggle, toast } from './ui.js';
 
@@ -157,7 +158,25 @@ form.addEventListener('submit', async (event) => {
   if (mode === 'signup') payload.username = fields.username.value.trim();
 
   try {
-    const result = mode === 'signup' ? await api.signup(payload) : await api.login(payload);
+    // Supabase holds the credentials when it is configured; the local
+    // endpoints stay as a fallback so this page still works offline.
+    const result = supa.isEnabled()
+      ? (mode === 'signup'
+          ? await supa.signUp({ ...payload, username: payload.username })
+          : await supa.signIn(payload))
+      : (mode === 'signup' ? await api.signup(payload) : await api.login(payload));
+
+    if (result?.needsEmailConfirmation) {
+      delete submit.dataset.loading;
+      render(formError,
+        `Almost there — confirm ${result.email} from the email Supabase just sent, then sign in.`);
+      formError.dataset.show = 'true';
+      formError.classList.add('form__error--info');
+      applyMode('login');
+      fields.email.value = payload.email;
+      return;
+    }
+
     picks.clear();
     location.href = result.user.onboarded ? '/app' : '/';
   } catch (err) {
@@ -178,6 +197,7 @@ form.addEventListener('submit', async (event) => {
       }
       return;
     }
+    formError.classList.remove('form__error--info');
     formError.textContent = err.message;
     formError.dataset.show = 'true';
   }
@@ -220,6 +240,13 @@ $('#reveal').addEventListener('click', (e) => {
 /* --------------------------------- boot ----------------------------------- */
 
 render($('#site-nav'), themeToggle());
+
+// Find out whether Supabase is handling credentials before the form is usable.
+await supa.loadConfig();
+if (supa.isEnabled()) {
+  const note = $('#auth-lead');
+  note.dataset.supabase = 'true';
+}
 
 const carriedCount = picks.count();
 if (carriedCount) {

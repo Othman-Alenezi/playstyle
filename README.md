@@ -157,6 +157,7 @@ server/
   lib/db.js            picks a backend and re-exports it
   lib/db-sqlite.js     SQLite implementation (default, local development)
   lib/db-postgres.js   Postgres implementation (used when DATABASE_URL is set)
+  lib/supabase.js      Supabase config and ES256 access-token verification
   lib/catalog.js       loads the catalog, builds TF-IDF tag vectors
   lib/recommend.js     scoring, diversification, explanations
   lib/auth.js          bcrypt hashing, opaque session tokens
@@ -269,6 +270,41 @@ game. Ranking is Hacker News style decay (`hotScore` in `server/lib/hubs.js`)
 so an old popular thread cannot hold the front page. Comments load on demand
 when a thread is expanded, so a hub with fifty posts is one request, not
 fifty-one.
+
+## Registration and sign-in (Supabase Auth)
+
+Credentials are handled by **Supabase Auth**, so this app never receives a
+password. The flow:
+
+1. The browser signs up or signs in against Supabase directly, using the
+   **publishable** key. That key exists to be embedded in client code, so it
+   is committed in `server/lib/supabase.js` -- there is no secret to configure
+   and the deployment needs no environment variables at all.
+2. Supabase returns an access token. The browser posts it to
+   `POST /api/auth/supabase`.
+3. The server verifies that token against Supabase's **public JWKS endpoint**
+   (`ES256`), mirrors the identity into the local `users` table, and issues the
+   same httpOnly session cookie the rest of the app already used.
+
+Three decisions worth explaining:
+
+- **No `supabase-js`.** The library would have to load from a CDN, which means
+  loosening `script-src` in the CSP. Two `fetch` calls do the same job and
+  `script-src 'self'` stays intact.
+- **The Supabase token is never stored in the browser.** It is exchanged
+  immediately for our own httpOnly cookie and discarded, so an injected script
+  cannot read it. The refresh token is thrown away.
+- **Only `ES256` is accepted.** The project also has a legacy `HS256` anon key
+  whose secret is effectively public; accepting that algorithm would let
+  anyone mint a valid-looking session. There is a test for this.
+
+A registration writes `auth.users` (managed by Supabase) and, via the
+`on_auth_user_created` trigger, `public.profiles`. Profiles carry RLS policies
+so a signed-in user can read any profile but only modify their own.
+
+The app's own `/api/auth/signup` and `/api/auth/login` remain as a fallback
+for working offline; the page uses Supabase whenever `/api/config` advertises
+it.
 
 ## Security posture
 
