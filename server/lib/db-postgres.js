@@ -155,35 +155,6 @@ export const Feedback = {
   },
 };
 
-/**
- * Bulk inserts, used by the demo seeder.
- *
- * Seeding row-by-row is fine against a local file but not across a network:
- * ~2400 round trips would blow a serverless request's time limit on the first
- * boot against an empty database. One statement per table instead.
- */
-const bulk = async (table, cols, rows, toParams, conflict = 'do nothing') => {
-  if (!rows.length) return 0;
-  const width = cols.length;
-  const values = rows.map((_, r) =>
-    `(${cols.map((__, c) => `$${r * width + c + 1}`).join(', ')})`).join(',\n');
-  const params = rows.flatMap(toParams);
-  return run(
-    `insert into ${table} (${cols.join(', ')}) values\n${values}\non conflict ${conflict}`,
-    params,
-  );
-};
-
-Users.createMany = (rows) => bulk('users',
-  ['id', 'email', 'username', 'password_hash', 'created_at', 'onboarded'], rows,
-  (r) => [r.id, r.email, r.username, r.password_hash, r.created_at, r.onboarded ?? true]);
-
-Reviews.upsertMany = (rows) => bulk('reviews',
-  ['id', 'user_id', 'game_id', 'verdict', 'body', 'hours', 'created_at', 'updated_at'], rows,
-  (r) => [r.id, r.user_id, r.game_id, r.verdict, r.body, r.hours, r.created_at, r.updated_at],
-  `(user_id, game_id) do update set verdict = excluded.verdict, body = excluded.body,
-     hours = excluded.hours, updated_at = excluded.updated_at`);
-
 /* --------------------------------- hubs ----------------------------------- */
 
 export const Hubs = {
@@ -323,6 +294,35 @@ export const Reviews = {
     return false;
   }),
 };
+
+/**
+ * Bulk inserts, used by the demo seeder.
+ *
+ * Seeding row-by-row is fine against a local file but not across a network:
+ * ~2400 round trips would blow a serverless request's time limit on the first
+ * boot against an empty database. One statement per table instead.
+ */
+const bulk = async (table, cols, rows, toParams, conflict = 'do nothing') => {
+  if (!rows.length) return 0;
+  const width = cols.length;
+  const values = rows.map((_, r) =>
+    `(${cols.map((__, c) => `$${r * width + c + 1}`).join(', ')})`).join(',\n');
+  const params = rows.flatMap(toParams);
+  return run(
+    `insert into ${table} (${cols.join(', ')}) values\n${values}\non conflict ${conflict}`,
+    params,
+  );
+};
+
+Users.createMany = (rows) => bulk('users',
+  ['id', 'email', 'username', 'password_hash', 'created_at', 'onboarded'], rows,
+  (r) => [r.id, r.email, r.username, r.password_hash, r.created_at, r.onboarded ?? true]);
+
+Reviews.upsertMany = (rows) => bulk('reviews',
+  ['id', 'user_id', 'game_id', 'verdict', 'body', 'hours', 'created_at', 'updated_at'], rows,
+  (r) => [r.id, r.user_id, r.game_id, r.verdict, r.body, r.hours, r.created_at, r.updated_at],
+  `(user_id, game_id) do update set verdict = excluded.verdict, body = excluded.body,
+     hours = excluded.hours, updated_at = excluded.updated_at`);
 
 Posts.createMany = (rows) => bulk('posts',
   ['id', 'franchise', 'user_id', 'title', 'body', 'created_at', 'updated_at'], rows,

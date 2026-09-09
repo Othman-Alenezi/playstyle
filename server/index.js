@@ -34,7 +34,26 @@ const catalogHas = (id) => byId.has(id);
     + ` DATABASE_URL=${process.env.DATABASE_URL ? 'present' : 'absent'}`);
 }
 
-await migrate();
+/**
+ * A database that cannot be reached is fatal, but the raw stack trace it
+ * produces says almost nothing useful on a serverless platform. Translate the
+ * common causes into something actionable before exiting.
+ */
+try {
+  await migrate();
+} catch (err) {
+  const hint = {
+    ENOTFOUND: 'the host in DATABASE_URL does not resolve -- check it was copied whole',
+    ECONNREFUSED: 'nothing is listening there -- check the port (6543 for the Supabase pooler)',
+    ETIMEDOUT: 'the connection timed out -- a direct connection may be unreachable; use the pooler',
+    '28P01': 'password authentication failed -- the [YOUR-PASSWORD] placeholder may not have been replaced',
+    '3D000': 'that database does not exist -- the path should end in /postgres',
+    '28000': 'the role was rejected -- for the pooler the user looks like postgres.<project-ref>',
+  }[err.code] ?? err.message;
+  console.error(`[boot] cannot reach the database: ${hint}`);
+  console.error(`[boot] code=${err.code ?? 'none'} storage=${storageSummary().backend}`);
+  throw err;
+}
 
 /**
  * Seed the demo content when the store comes up empty.
