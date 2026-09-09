@@ -1,14 +1,19 @@
 /**
  * Selects the data layer.
  *
- * Supabase over HTTPS is the default and what the deployment uses: it needs
- * only the publishable key, so there is nothing to configure on the host.
+ * Supabase over HTTPS is the default, and choosing Postgres requires an
+ * explicit USE_POSTGRES=1 rather than merely the presence of DATABASE_URL.
  *
- * DATABASE_URL is still honoured for a direct Postgres connection, which is
- * faster and supports transactions, for anyone running this on a host where
- * a connection string is easy to set.
+ * That distinction is deliberate. A DATABASE_URL left behind from an earlier
+ * attempt took the entire deployment down -- the app selected a connection it
+ * could not open and died on every request. Opting in explicitly means a
+ * stale variable is inert, and the default path needs no configuration at
+ * all: the publishable key is designed to be public, so there is nothing to
+ * set on the host.
  */
-const impl = process.env.DATABASE_URL
+const usePostgres = process.env.USE_POSTGRES === '1' && !!process.env.DATABASE_URL;
+
+const impl = usePostgres
   ? await import('./db-postgres.js')
   : await import('./db-supabase.js');
 
