@@ -1,18 +1,15 @@
 /**
- * DEVELOPMENT SEED DATA -- run with `npm run db:demo`.
+ * Demo content: reviewer personas, their reviews, and hub discussions.
  *
- * Creates a set of demo accounts with deliberately different taste profiles
- * and writes reviews from them, so the taste-match feature can be seen and
- * tested before there are real users.
+ * NOT RUNNABLE AS-IS. It was written for a database the app could write to
+ * directly. Now that identity is Supabase Auth and RLS scopes every write to
+ * auth.uid(), seeding means creating each persona as a real Supabase account
+ * and writing their content as themselves.
  *
- * This is NOT launch content. Shipping invented reviews as if real people
- * wrote them would be dishonest, and every account it creates is named
- * `demo_*` with a shared password so it is obvious what they are.
+ * The data below is kept because it is hand-written and worth reusing; the
+ * seeder that consumes it still needs building.
  */
-import { randomUUID, createHash } from 'node:crypto';
-import { pathToFileURL } from 'node:url';
-import { migrate, Users, Feedback, Reviews, Hubs, Posts } from './db.js';
-import { hashPassword } from './auth.js';
+import { createHash } from 'node:crypto';
 import { byId } from './catalog.js';
 
 export const DEMO_PASSWORD = 'demo-account-not-for-production';
@@ -37,7 +34,7 @@ const dedupeBy = (rows, key) => {
  * next -- and the visitor was logged out on their next click. Deriving the id
  * makes the seeded identities identical everywhere.
  */
-function stableId(seed) {
+export function stableId(seed) {
   const h = createHash('sha256').update(`playstyle-demo:${seed}`).digest('hex');
   // Shape it as a UUID so it matches the format used for real accounts.
   return [h.slice(0, 8), h.slice(8, 12), h.slice(12, 16), h.slice(16, 20), h.slice(20, 32)].join('-');
@@ -788,110 +785,12 @@ const POSTS = [
     ['demo_gridline', 'Behemoths were a terrible idea and I miss them enormously.']]],
 ];
 
-export async function seedDemoData({ quiet = false } = {}) {
-  await migrate();
-  const log = quiet ? () => {} : console.log;
+export const DEMO_CONTENT = { PEOPLE, REVIEWS, POSTS };
 
-  const missing = REVIEWS.filter(([, gameId]) => !byId.has(gameId)).map(([, g]) => g);
-  if (missing.length) throw new Error(`demo reviews reference unknown games: ${[...new Set(missing)].join(', ')}`);
-
-  const password_hash = await hashPassword(DEMO_PASSWORD);
-  const now = Date.now();
-  const ids = new Map(PEOPLE.map((p) => [p.username, stableId(p.username)]));
-
-  // Everything is derived, so the whole dataset can be built in memory and
-  // written with one statement per table. Seeding row-by-row meant roughly
-  // 2400 round trips, which is fine against a local file and far too slow
-  // across a network.
-  for (const person of PEOPLE) {
-    const bad = person.loves.filter((g) => !byId.has(g));
-    if (bad.length) throw new Error(`${person.username} loves unknown games: ${bad.join(', ')}`);
-  }
-
-  await Users.createMany(PEOPLE.map((person) => ({
-    id: ids.get(person.username),
-    email: `${person.username}@demo.playstyle.local`,
-    username: person.username,
-    password_hash,
-    created_at: now,
-    onboarded: true,
-  })));
-
-  for (const person of PEOPLE) {
-    await Feedback.setMany(
-      ids.get(person.username),
-      person.loves.map((gameId) => ({ gameId, signal: 'love' })),
-      now,
-    );
-  }
-
-  // One review per person per game is a unique constraint, and a multi-row
-  // upsert that touches the same key twice is a hard error in Postgres
-  // ("cannot affect row a second time"). SQLite quietly kept the last write,
-  // so ten duplicate pairs in the list above had been discarded unnoticed.
-  // Deduplicate explicitly, keeping the last, and say so.
-  const reviewRows = new Map();
-  for (const [username, game_id, verdict, hours, body] of REVIEWS) {
-    const user_id = ids.get(username);
-    if (!user_id) throw new Error(`review by unknown demo user: ${username}`);
-    reviewRows.set(`${user_id}\u0000${game_id}`, {
-      id: stableId(`review:${username}:${game_id}`),
-      user_id, game_id, verdict, body, hours,
-      created_at: now, updated_at: now,
-    });
-  }
-  const dropped = REVIEWS.length - reviewRows.size;
-  if (dropped) log(`  note: ${dropped} duplicate (reviewer, game) pairs collapsed`);
-  await Reviews.upsertMany([...reviewRows.values()]);
-
-  const postRows = [];
-  const commentRows = [];
-  const voteRows = [];
-  const memberRows = [];
-
-  for (const [author, franchise, title, body, comments] of POSTS) {
-    const user_id = ids.get(author);
-    if (!user_id) throw new Error(`post by unknown demo user: ${author}`);
-    const postId = stableId(`post:${author}:${franchise}:${title}`);
-    postRows.push({ id: postId, franchise, user_id, title, body, created_at: now, updated_at: now });
-    memberRows.push({ franchise, user_id, created_at: now });
-
-    for (const [commenter, text] of comments ?? []) {
-      const cid = ids.get(commenter);
-      if (!cid) throw new Error(`comment by unknown demo user: ${commenter}`);
-      commentRows.push({
-        id: stableId(`comment:${commenter}:${postId}:${text.slice(0, 40)}`),
-        post_id: postId, user_id: cid, body: text, created_at: now,
-      });
-      memberRows.push({ franchise, user_id: cid, created_at: now });
-    }
-
-    // Derived, not random: two servers must agree on the vote counts or the
-    // same page shows different numbers depending on which one answers.
-    for (const [name, other] of ids) {
-      if (other === user_id) continue;
-      const draw = parseInt(createHash('sha256').update(`vote:${name}:${postId}`).digest('hex').slice(0, 4), 16);
-      if (draw % 100 < 45) voteRows.push({ post_id: postId, user_id: other, created_at: now });
-    }
-  }
-
-  // Same hazard as the reviews: every one of these tables has a composite or
-  // unique key, so a duplicate inside a single statement would fail.
-  await Posts.createMany(dedupeBy(postRows, (r) => r.id));
-  await Posts.addCommentMany(dedupeBy(commentRows, (r) => r.id));
-  await Posts.voteMany(dedupeBy(voteRows, (r) => `${r.post_id}\u0000${r.user_id}`));
-  await Hubs.joinMany(dedupeBy(memberRows, (r) => `${r.franchise}\u0000${r.user_id}`));
-
-  const games = new Set(REVIEWS.map(([, g]) => g));
-  const hubSlugs = new Set(POSTS.map(([, f]) => f));
-  log(`Demo data ready: ${PEOPLE.length} accounts, ${reviewRows.size} reviews across ${games.size} games,`
-    + ` ${POSTS.length} hub posts across ${hubSlugs.size} fandoms.`);
-  log(`Sign in as any of them with password: ${DEMO_PASSWORD}`);
-  log('Games with reviews:', [...games].join(', '));
-  return { accounts: PEOPLE.length, reviews: reviewRows.size, posts: POSTS.length };
-}
-
-// Only run as a CLI when invoked directly.
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  seedDemoData().catch((err) => { console.error(err.message); process.exit(1); });
+/** Guard against a game id in the demo data that is not in the catalogue. */
+export function validateDemoContent() {
+  const bad = [];
+  for (const p of PEOPLE) for (const g of p.loves) if (!byId.has(g)) bad.push(`${p.username}:${g}`);
+  for (const [, g] of REVIEWS) if (!byId.has(g)) bad.push(`review:${g}`);
+  return bad;
 }

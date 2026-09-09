@@ -10,15 +10,10 @@
   "scripts": {
     "start": "node --env-file-if-exists=.env server/index.js",
     "dev": "node --watch --env-file-if-exists=.env server/index.js",
-    "db:seed": "node server/lib/seed.js",
-    "db:reset": "rm -f data/playstyle.db data/playstyle.db-wal data/playstyle.db-shm && node server/lib/seed.js",
-    "db:demo": "node server/lib/demo.js",
     "covers": "node server/lib/fetch-covers.js",
     "vercel-build": "node scripts/gen-session-key.mjs"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "better-sqlite3": "^12.11.1",
     "cookie-parser": "^1.4.7",
     "express": "^4.21.2",
     "helmet": "^8.0.0",
