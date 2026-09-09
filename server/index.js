@@ -4,9 +4,9 @@ import cookieParser from 'cookie-parser';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 
-import { migrate, Sessions, Users, IS_EPHEMERAL, storageSummary } from './lib/db.js';
+import { migrate, storageSummary } from './lib/db.js';
 import { attachUser, verifyOrigin } from './middleware.js';
-import { sessionInfo } from './lib/auth.js';
+import { keySource } from './lib/auth-key.js';
 import { clientConfig, SUPABASE_URL, SUPABASE_ENABLED } from './lib/supabase.js';
 import authRoutes from './routes/auth.js';
 import gameRoutes from './routes/games.js';
@@ -34,42 +34,7 @@ const catalogHas = (id) => byId.has(id);
     + ` DATABASE_URL=${process.env.DATABASE_URL ? 'present' : 'absent'}`);
 }
 
-/**
- * A database that cannot be reached is fatal, but the raw stack trace it
- * produces says almost nothing useful on a serverless platform. Translate the
- * common causes into something actionable before exiting.
- */
-try {
-  await migrate();
-} catch (err) {
-  const hint = {
-    ENOTFOUND: 'the host in DATABASE_URL does not resolve -- check it was copied whole',
-    ECONNREFUSED: 'nothing is listening there -- check the port (6543 for the Supabase pooler)',
-    ETIMEDOUT: 'the connection timed out -- a direct connection may be unreachable; use the pooler',
-    '28P01': 'password authentication failed -- the [YOUR-PASSWORD] placeholder may not have been replaced',
-    '3D000': 'that database does not exist -- the path should end in /postgres',
-    '28000': 'the role was rejected -- for the pooler the user looks like postgres.<project-ref>',
-  }[err.code] ?? err.message;
-  console.error(`[boot] cannot reach the database: ${hint}`);
-  console.error(`[boot] code=${err.code ?? 'none'} storage=${storageSummary().backend}`);
-  throw err;
-}
-
-/**
- * Seed the demo content when the store comes up empty.
- *
- * On an ephemeral filesystem that is every cold start. With a real database
- * it happens once, on the first deploy, and never again -- which is exactly
- * what we want either way.
- */
-if (process.env.SEED_ON_EMPTY !== 'false') {
-  const users = await Users.count();
-  if (users === 0) {
-    const { seedDemoData } = await import('./lib/demo.js');
-    await seedDemoData({ quiet: true });
-    console.log(`[boot] empty ${storageSummary().backend} store: demo data seeded`);
-  }
-}
+await migrate();
 
 const app = express();
 app.set('trust proxy', PROD ? 1 : false); // req.ip must be real for rate limiting
@@ -128,7 +93,7 @@ app.get('/api/health', (_req, res) => res.json({
   ok: true, catalog: stats, uptime: process.uptime(),
   // Which session strategy is active, and where its signing key came from.
   // If keySource is ever "dev-default" on a deployment, sessions are broken.
-  session: sessionInfo(),
+  session: { mode: 'supabase-token-cookie', keySource: keySource() },
   storage: storageSummary(),
   auth: { supabase: SUPABASE_ENABLED },
   // Which configuration actually reaches the running process. Names and
@@ -183,28 +148,17 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: 'server_error', message: 'Something broke on our end.' });
 });
 
-// Housekeeping: drop expired sessions hourly.
-setInterval(async () => {
-  try {
-    const n = await Sessions.purgeExpired();
-    if (n) console.log(`[sessions] purged ${n} expired`);
-  } catch (err) {
-    console.error('[sessions] purge failed:', err.message);
-  }
-}, 60 * 60e3).unref();
-
 export default app;
 
 /**
  * Only listen when this file is the process entry point. Under a serverless
- * host the platform imports `app` and handles the socket itself.
+ * host the platform imports `app` and owns the socket.
  */
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const server = app.listen(PORT, () => {
     const store = storageSummary();
     console.log(`Playstyle running on http://localhost:${PORT}`
-      + `  (${stats.games} games, ${stats.features} tags, ${store.backend}`
-      + `${store.durable ? '' : ', ephemeral'})`);
+      + `  (${stats.games} games, ${stats.features} tags, ${store.backend})`);
   });
   for (const sig of ['SIGINT', 'SIGTERM']) {
     process.on(sig, () => { server.close(() => process.exit(0)); });

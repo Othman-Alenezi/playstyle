@@ -15,7 +15,7 @@
 import { createPublicKey, verify as verifySignature } from 'node:crypto';
 
 const PROJECT_REF = process.env.SUPABASE_PROJECT_REF || 'juxzjoensokjwmvoaesj';
-const PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY
+export const PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY
   || 'sb_publishable_bIwfz0OS3Gt21A35anlq9w_zAhap0qa';
 
 export const SUPABASE_URL = process.env.SUPABASE_URL || `https://${PROJECT_REF}.supabase.co`;

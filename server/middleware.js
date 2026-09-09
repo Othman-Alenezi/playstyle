@@ -1,20 +1,26 @@
-import { COOKIE, readSession } from './lib/auth.js';
+import { COOKIE, read as readSession } from './lib/session.js';
+import { authContext } from './lib/db-supabase.js';
 
-/** Resolve the session cookie into req.user (or null) on every request. */
-export async function attachUser(req, _res, next) {
+/**
+ * Resolve the session cookie into req.user, and put the person's Supabase
+ * access token into async context for the rest of the request.
+ *
+ * The data layer reads the token from that context rather than taking it as a
+ * parameter, which is why no route had to change when the backend moved to
+ * Supabase: RLS sees the real auth.uid() on every query.
+ */
+export async function attachUser(req, res, next) {
+  let session = null;
   try {
-    const row = await readSession(req.cookies?.[COOKIE]);
-    req.user = row
-      ? { id: row.id, email: row.email, username: row.username, onboarded: !!row.onboarded }
-      : null;
-    next();
+    session = await readSession(req.cookies?.[COOKIE], res);
   } catch (err) {
-    // A database blip must not make every request throw; treat it as signed out
-    // and let the route decide whether that is fatal.
-    console.error('[auth] session lookup failed:', err.message);
-    req.user = null;
-    next();
+    // Never fail a request because a session could not be read: treat it as
+    // signed out and let the route decide whether that matters.
+    console.error('[auth] session read failed:', err.message);
   }
+  req.user = session?.user ?? null;
+  // No token means the anonymous role, which RLS limits to public reads.
+  authContext.run({ accessToken: session?.accessToken ?? null }, () => next());
 }
 
 export function requireAuth(req, res, next) {

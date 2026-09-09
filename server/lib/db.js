@@ -1,18 +1,16 @@
 /**
- * Picks the data-layer implementation and re-exports it.
+ * Selects the data layer.
  *
- * DATABASE_URL set  -> Postgres (Supabase in this project). Durable, shared
- *                      between every server, and what the deployment uses.
- * DATABASE_URL unset -> SQLite in a local file. The default for development,
- *                      so working on this needs no network and no credentials.
+ * Supabase over HTTPS is the default and what the deployment uses: it needs
+ * only the publishable key, so there is nothing to configure on the host.
  *
- * Both expose the same async API, so nothing downstream branches on backend.
+ * DATABASE_URL is still honoured for a direct Postgres connection, which is
+ * faster and supports transactions, for anyone running this on a host where
+ * a connection string is easy to set.
  */
-const usePostgres = !!process.env.DATABASE_URL;
-
-const impl = usePostgres
+const impl = process.env.DATABASE_URL
   ? await import('./db-postgres.js')
-  : await import('./db-sqlite.js');
+  : await import('./db-supabase.js');
 
 export const {
   migrate, withTransaction,
@@ -20,15 +18,6 @@ export const {
   REPORT_THRESHOLD, BACKEND, DB_PATH,
 } = impl;
 
-/**
- * True when the store does not survive the process -- SQLite in a serverless
- * container's /tmp. Postgres is durable wherever it runs, so this is false
- * with DATABASE_URL set, which is what switches sessions back to real
- * revocable database rows and stops the app rebuilding accounts from cookies.
- */
-export const IS_EPHEMERAL = usePostgres ? false : (impl.IS_EPHEMERAL ?? false);
+export const IS_EPHEMERAL = false;
 
-export const storageSummary = () => ({
-  backend: BACKEND,
-  durable: !IS_EPHEMERAL,
-});
+export const storageSummary = () => ({ backend: BACKEND, durable: true });

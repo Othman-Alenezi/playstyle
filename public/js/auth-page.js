@@ -20,7 +20,8 @@ const fields = {
 let mode = new URLSearchParams(location.search).get('mode') === 'signup' ? 'signup' : 'login';
 
 /* --------------------------- client-side validation ----------------------- */
-/* Mirrors server/lib/validate.js. The server is the authority; this exists so
+/* Client-side checks only, so people get an answer without a round trip.
+   Supabase is the authority on email and password rules; this exists so
    people get an answer without a round trip. */
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;

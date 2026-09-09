@@ -18,258 +18,40 @@ work within a container's lifetime, but two visitors may land on different
 containers and a restart resets to the seeded demo content. `IS_EPHEMERAL` in
 `server/lib/db.js` is what detects this and seeds the demo data at boot.
 
-### Two backends
+### Everything is in Supabase
 
-`server/lib/db.js` picks an implementation at import time:
+`server/lib/db.js` picks the data layer. The default, and what the deployment
+uses, is `db-supabase.js`: Supabase's REST API over HTTPS.
 
-| `DATABASE_URL` | Backend | Used for |
-| --- | --- | --- |
-| unset | SQLite file in `data/` | local development -- no network, no credentials |
-| set | Postgres (Supabase here) | the deployment |
+**Why HTTPS rather than a Postgres connection.** The wire protocol needs a
+connection string, which is a secret that has to be configured on the host.
+The REST API needs only the publishable key, which exists to be embedded in
+client code. So the deployment needs no environment variables at all --
+nothing to configure, nothing to leak, nothing to forget.
 
-Both expose the same **async** API, so no route knows which is live. SQLite is
-synchronous underneath; its methods are wrapped as async so there is one
-calling convention rather than two.
+`db-postgres.js` is still there and is used when `DATABASE_URL` is set. It is
+faster and supports real transactions, so it is the better choice on a host
+where setting a connection string is straightforward.
 
-Setting `DATABASE_URL` also changes behaviour that depended on storage being
-throwaway: `IS_EPHEMERAL` becomes false, so sessions go back to being real
-revocable rows in `sessions` instead of signed cookies, and the app stops
-rebuilding accounts from cookie payloads. Those workarounds exist only for
-SQLite-in-a-serverless-container.
+**Access control is RLS, not the application.** Every table has policies (see
+the migrations). Writes are scoped to `auth.uid()`, so the server cannot write
+a row as somebody else even if a bug tried to. Reads follow what the app
+actually shows: reviews, posts and usernames are readable by anyone, because
+a signed-out visitor browses them; reports are readable only by their author.
 
-Things the Postgres port had to reconcile:
+The signed-in person's access token travels in async context
+(`AsyncLocalStorage`) rather than as a parameter on every call. That is why
+moving the backend to Supabase changed no route: the data layer picks up the
+token itself, so RLS sees a real `auth.uid()` on every query.
 
-- `bigint` arrives from `pg` as a string; parsed to Number globally, or every
-  timestamp and every `COUNT(*)` would be text.
-- Booleans are returned as `0`/`1` where SQLite returned integers, so callers
-  comparing `=== 1` did not have to change.
-- `sum()` over a boolean is invalid, so vote tallies use
-  `count(*) filter (where ...)`, and `u.username` had to join the `group by`:
-  Postgres will not infer it from another table's key.
-- A multi-row upsert cannot touch the same key twice ("cannot affect row a
-  second time"). The demo seed contained ten duplicate (reviewer, game) pairs
-  that SQLite had been silently discarding; every bulk insert now
-  deduplicates and reports what it collapsed.
-- Seeding row-by-row was ~2400 round trips, fine against a local file and far
-  too slow across a network. The seeder writes one statement per table.
+Two consequences of PostgREST worth knowing:
 
-### Sessions on a serverless host
-
-Two strategies, picked automatically (`SESSION_MODE` in `server/lib/auth.js`,
-reported by `/api/health`):
-
-- **database** (local, and any normal server): the cookie is an opaque random
-  token and the server stores only an HMAC of it, so sessions are revocable.
-- **stateless** (serverless): the identity is signed into the cookie, because
-  containers do not share a database and a session row written by one does not
-  exist in the next.
-
-Three separate things all had to be fixed before a deployed login would hold:
-
-1. The signing key was generated per process, so every container rejected the
-   others' cookies. It now comes from `SESSION_SECRET`, or from `.session-key`
-   written once at build time by `scripts/gen-session-key.mjs`.
-2. Sessions were database rows, which do not exist in a container that did not
-   issue them. Hence stateless mode.
-3. The demo seed used random UUIDs, so `demo_lorehound` had a different id in
-   every container and a valid cookie still pointed at a missing user. Seeded
-   ids are now derived from their names, so all containers agree.
-
-Set `SESSION_SECRET` for a real deployment; otherwise sessions end at each
-redeploy, when the build key is regenerated.
-
-#### Accounts on the deployed demo
-
-Registering works, and the session then holds up wherever requests land: the
-signed cookie carries the account and the ratings behind the taste profile, so
-a container that has never seen the account rebuilds it, and containers
-reconcile their ratings against the cookie so the match list is the same
-everywhere.
-
-What still does not work there is **signing in again with the password**. The
-hash lives only in the container that handled the registration, and a rebuilt
-row is deliberately marked as unable to verify one -- signing in says so
-plainly, and signing up again reclaims the row rather than reporting the email
-as taken. In practice the 30-day cookie means there is rarely a reason to sign
-in again.
-
-Fixing that properly means shared storage, not a cookie: run the app as a
-normal process where SQLite persists, or move `server/lib/db.js` to Postgres.
-
-## Running it
-
-```bash
-npm install
-npm run db:seed     # creates data/playstyle.db
-npm run db:demo     # optional: demo accounts + reviews, for development only
-npm start           # http://localhost:3000
-```
-
-`npm run db:demo` creates 48 `demo_*` accounts and 456 reviews, so the
-taste-match feature can be seen before there are real users. It is development
-scaffolding, not launch content — **do not run it against production.** Every
-account shares the password printed by the script.
-
-The reviewers are deliberately arranged in **taste clusters of three or more**
-(several soulslike players, several Call of Duty players, several cozy
-players, and so on). That is not decoration: "players with your taste" needs
-three reviewers above the match floor before it will show a number, so with
-one reviewer per taste the feature was invisible on all but a single game.
-Reviews are also written for what each cluster gets *recommended* rather than
-what it already loves, since a game you have rated is excluded from your own
-recommendations.
-
-Measured across twelve taste profiles: 88% of recommended games have reviews
-and the taste-matched card appears on 51% of them.
-
-`npm run covers` fetches artwork from Steam; `node scripts/fetch-missing-covers.mjs`
-is a second pass against Wikipedia for the titles Steam does not carry
-(console exclusives, Valorant, Fortnite). Together they cover 132 of 148. The
-rest fall back to a generated typographic cover.
-
-`npm run dev` restarts on file changes. `npm run db:reset` wipes the database and
-recreates the schema.
-
-Node 20+ required (developed on 24 LTS). Copy `.env.example` to `.env` before
-deploying — `SESSION_SECRET` is mandatory in production and the server refuses to
-boot without it.
-
-## What's built
-
-| Area | State |
-| --- | --- |
-| Taste quiz (guest, no account) | done |
-| Recommendation engine + explanations | done |
-| Signup / login / logout, sessions | done |
-| Recommendation feed with ratings that retrain the profile | done |
-| Taste profile visualisation | done |
-| Game detail page | done |
-| Taste-matched reviews, voting, reporting | done |
-| Fandom hubs: posts, upvotes, comments, membership | done |
-
-## Layout
-
-```
-data/games.json        148-game catalog: genres, playstyle tags, blurbs
-server/
-  index.js             app wiring, CSP, static files, error handling
-  middleware.js        session lookup, auth guard, rate limiting, origin check
-  lib/db.js            picks a backend and re-exports it
-  lib/db-sqlite.js     SQLite implementation (default, local development)
-  lib/db-postgres.js   Postgres implementation (used when DATABASE_URL is set)
-  lib/supabase.js      Supabase config and ES256 access-token verification
-  lib/catalog.js       loads the catalog, builds TF-IDF tag vectors
-  lib/recommend.js     scoring, diversification, explanations
-  lib/auth.js          bcrypt hashing, opaque session tokens
-  lib/validate.js      input rules (mirrored on the client)
-  lib/validate-review.js  review input rules
-  lib/hubs.js          fandom metadata derived from the catalog, hot ranking
-  routes/              auth.js, games.js, taste.js, reviews.js, hubs.js
-public/
-  index.html           landing + taste quiz + guest preview
-  auth.html            sign in / create account
-  app.html             recommendation feed
-  games.html           browse the catalogue: search, genre filter, sorting
-  game.html            one game: your match, and reviews ranked by taste match
-  fandoms.html         hub directory, your fandoms first
-  hub.html             one fandom: posts, upvotes, comments
-  css/tokens.css       every colour, size and timing in the product
-  css/styles.css       components
-  css/pages.css        page layouts
-  js/                  api client, UI helpers, one module per page
-```
-
-## How the recommender works
-
-There is no co-play data on day one, so collaborative filtering has nothing to
-work with. This is content-based instead, which works from the very first pick
-and — more importantly — can explain itself.
-
-1. **Features.** Each game becomes a vector of its playstyle tags plus its
-   genres (genres carry 1.45× weight). Every feature is scaled by inverse
-   document frequency, so `souls-like` counts for far more than `multiplayer`.
-2. **Business-model tags are halved.** `live-service`, `f2p`, `seasonal`, `aaa`
-   and friends describe how a game is *sold*, not how it *plays*. At full weight
-   they recommended NBA 2K to a Call of Duty player.
-3. **Taste vector.** Sum the vectors of everything rated, weighted by signal:
-   `love +1.0`, `wishlist +0.5`, `played +0.25`, `meh −0.7`. Negative weights
-   stay in the vector so disliked tags actively push candidates down.
-4. **Score.** Cosine similarity, times a mild quality prior from review score,
-   times a light popularity tie-break. A candidate sharing no genre with
-   anything you like is multiplied by 0.74 — cross-genre picks are how people
-   discover things, they just shouldn't outrank the obvious ones.
-5. **Diversify.** Greedy selection: one game per franchise, and a penalty for
-   candidates that mostly repeat something already picked. Without it the feed
-   becomes six flavours of the same shooter.
-6. **Explain.** Attribute the match to the single rated game that best accounts
-   for it, and name the top shared tags: *"Because you love Elden Ring — you
-   both share dark fantasy, soulslike, action rpg."*
-
-The displayed match percentage is a monotonic curve over the same blended score
-used for ranking, so the numbers always descend down the page.
-
-Tuning constants live at the top of `server/lib/recommend.js`.
-
-## Taste-matched reviews
-
-This is the part that has no equivalent on a storefront. Every review carries
-the reviewer's own taste profile and a **taste match** percentage against the
-person reading it — the cosine of their two taste vectors, on the same display
-curve as game matches. Reviews are ranked by that match by default.
-
-It changes what the same page tells different people. Elden Ring in the demo
-data sits at 25% recommend overall, but:
-
-- a souls player's closest match (97%) recommends it
-- a cozy player's closest match (100%) says avoid
-
-A star average would have told both of them the same useless thing.
-
-Two deliberate restraints on the aggregate:
-
-- **Your own review is excluded** from "players with your taste" — you match
-  yourself 100%, so counting it just reflects your own opinion back at you.
-- **It needs three matched reviewers** before it appears. "100% of players like
-  you recommend this" off one review is a lie dressed as a statistic; the card
-  says plainly why the number is missing instead.
-
-Reviewer privacy is deliberately narrow: at most three games they love and
-their three strongest tags. Posting a review is the opt-in for showing it.
-
-**Moderation:** reviews are one-per-person-per-game and editable. Four reports
-auto-hide a review pending review (`REPORT_THRESHOLD` in `server/lib/db.js`).
-There is no admin UI yet — hidden reviews have to be un-hidden in SQL. That is
-the main gap before opening reviews to the public.
-
-## Fandom hubs
-
-A hub is a franchise, so there is no hubs table — membership and posts
-reference the franchise slug from `data/games.json` directly. Adding a game
-adds it to its franchise's hub automatically.
-
-**Hub names are derived, not maintained.** The display name is the longest
-common prefix of the titles in the franchise, cut to a word boundary: three
-Call of Duty games give "Call of Duty", and `hollow-knight` gives "Hollow
-Knight" even though one title is a prefix of the other. A single-game
-franchise uses that game's title. When the titles share nothing, the slug is
-tidied instead — which is how the `soulsborne` hub holding Elden Ring, Sekiro
-and Bloodborne gets its name.
-
-**Two things keep hubs from feeling dead**, which is what usually kills this
-kind of feature:
-
-- The directory leads with hubs tied to games you already like, then hubs with
-  actual activity, and only then the full list. A wall of 134 franchises you
-  have no connection to is not a community.
-- Posting or commenting joins the hub. Asking someone to press Join first is
-  friction for no benefit.
-
-Posts carry the author's taste profile and taste match, same as reviews — you
-can see whether the person arguing about balance actually plays this kind of
-game. Ranking is Hacker News style decay (`hotScore` in `server/lib/hubs.js`)
-so an old popular thread cannot hold the front page. Comments load on demand
-when a thread is expanded, so a hub with fifty posts is one request, not
-fifty-one.
+- **No transactions.** `withTransaction` runs the body directly. The places
+  that used it -- the report threshold and the demo seed -- are written to be
+  idempotent instead.
+- **No GROUP BY.** Tallies come from views (`review_stats`, `post_stats`,
+  `hub_stats`, `report_stats`), declared `security_invoker` so the underlying
+  RLS still applies. Per-row counts use aggregate embeds on real foreign keys.
 
 ## Registration and sign-in (Supabase Auth)
 

@@ -1,7 +1,7 @@
 /**
  * Postgres implementation of the data layer, used when DATABASE_URL is set.
  *
- * Kept deliberately parallel to db-sqlite.js: same object names, same method
+ * Kept deliberately parallel to db-supabase.js: same object names, same method
  * names, same return shapes. Where the two dialects disagree the difference
  * is absorbed here so no route ever has to know which backend is live.
  *
