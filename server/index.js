@@ -90,6 +90,19 @@ app.get('/api/health', (_req, res) => res.json({
   // If keySource is ever "dev-default" on a deployment, sessions are broken.
   session: sessionInfo(),
   storage: storageSummary(),
+  // Which configuration actually reaches the running process. Names and
+  // presence only -- never values. Added because the deployment reported the
+  // fallback signing key while the dashboard showed SESSION_SECRET as set,
+  // which meant guessing about whether Production variables arrive at all.
+  env: {
+    seen: Object.fromEntries(
+      ['DATABASE_URL', 'SESSION_SECRET', 'ALLOWED_ORIGINS', 'PORT', 'NODE_ENV', 'VERCEL',
+       'VERCEL_ENV', 'VERCEL_GIT_COMMIT_SHA']
+        .map((key) => [key, process.env[key] ? true : false]),
+    ),
+    vercelEnv: process.env.VERCEL_ENV ?? null,
+    commit: (process.env.VERCEL_GIT_COMMIT_SHA ?? '').slice(0, 7) || null,
+  },
 }));
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'not_found' }));
