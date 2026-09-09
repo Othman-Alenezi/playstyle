@@ -18,8 +18,40 @@ work within a container's lifetime, but two visitors may land on different
 containers and a restart resets to the seeded demo content. `IS_EPHEMERAL` in
 `server/lib/db.js` is what detects this and seeds the demo data at boot.
 
-For a persistent backend, run it as a normal process (Render, Railway, Fly, or
-a VPS) where the SQLite file survives, or swap `server/lib/db.js` for Postgres.
+### Two backends
+
+`server/lib/db.js` picks an implementation at import time:
+
+| `DATABASE_URL` | Backend | Used for |
+| --- | --- | --- |
+| unset | SQLite file in `data/` | local development -- no network, no credentials |
+| set | Postgres (Supabase here) | the deployment |
+
+Both expose the same **async** API, so no route knows which is live. SQLite is
+synchronous underneath; its methods are wrapped as async so there is one
+calling convention rather than two.
+
+Setting `DATABASE_URL` also changes behaviour that depended on storage being
+throwaway: `IS_EPHEMERAL` becomes false, so sessions go back to being real
+revocable rows in `sessions` instead of signed cookies, and the app stops
+rebuilding accounts from cookie payloads. Those workarounds exist only for
+SQLite-in-a-serverless-container.
+
+Things the Postgres port had to reconcile:
+
+- `bigint` arrives from `pg` as a string; parsed to Number globally, or every
+  timestamp and every `COUNT(*)` would be text.
+- Booleans are returned as `0`/`1` where SQLite returned integers, so callers
+  comparing `=== 1` did not have to change.
+- `sum()` over a boolean is invalid, so vote tallies use
+  `count(*) filter (where ...)`, and `u.username` had to join the `group by`:
+  Postgres will not infer it from another table's key.
+- A multi-row upsert cannot touch the same key twice ("cannot affect row a
+  second time"). The demo seed contained ten duplicate (reviewer, game) pairs
+  that SQLite had been silently discarding; every bulk insert now
+  deduplicates and reports what it collapsed.
+- Seeding row-by-row was ~2400 round trips, fine against a local file and far
+  too slow across a network. The seeder writes one statement per table.
 
 ### Sessions on a serverless host
 
@@ -122,7 +154,9 @@ data/games.json        148-game catalog: genres, playstyle tags, blurbs
 server/
   index.js             app wiring, CSP, static files, error handling
   middleware.js        session lookup, auth guard, rate limiting, origin check
-  lib/db.js            every SQL statement in the app
+  lib/db.js            picks a backend and re-exports it
+  lib/db-sqlite.js     SQLite implementation (default, local development)
+  lib/db-postgres.js   Postgres implementation (used when DATABASE_URL is set)
   lib/catalog.js       loads the catalog, builds TF-IDF tag vectors
   lib/recommend.js     scoring, diversification, explanations
   lib/auth.js          bcrypt hashing, opaque session tokens

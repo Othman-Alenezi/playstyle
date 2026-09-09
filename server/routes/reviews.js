@@ -27,9 +27,10 @@ const SORTS = {
  * so every visitor who clicked "reviews from players like you" landed on
  * Elden Ring and reasonably concluded that was the only game with reviews.
  */
-router.get('/reviews/highlights', (req, res) => {
+router.get('/reviews/highlights', async (req, res, next) => {
+  try {
   const limit = Math.min(Math.max(Number(req.query.limit) || 6, 1), 12);
-  const rows = Reviews.counts(3);
+  const rows = await Reviews.counts(3);
   const items = [];
   for (const row of rows) {
     const game = byId.get(row.game_id);
@@ -43,6 +44,7 @@ router.get('/reviews/highlights', (req, res) => {
   }
   res.set('Cache-Control', 'public, max-age=120');
   res.json({ items, reviewedGames: rows.length });
+  } catch (err) { next(err); }
 });
 
 /**
@@ -50,17 +52,18 @@ router.get('/reviews/highlights', (req, res) => {
  * matches the viewer's. Signed-out visitors get the reviews without matches --
  * the match number is the reason to have an account.
  */
-router.get('/games/:id/reviews', (req, res) => {
+router.get('/games/:id/reviews', async (req, res, next) => {
+  try {
   const game = byId.get(req.params.id);
   if (!game) return res.status(404).json({ error: 'not_found', message: 'No such game.' });
 
-  const rows = Reviews.forGame(game.id);
-  const viewerRows = req.user ? Feedback.forUser(req.user.id) : null;
+  const rows = await Reviews.forGame(game.id);
+  const viewerRows = req.user ? await Feedback.forUser(req.user.id) : null;
 
   // One query for every reviewer's ratings rather than one per reviewer.
-  const tasteByUser = Feedback.forUsers([...new Set(rows.map((r) => r.user_id))]);
+  const tasteByUser = await Feedback.forUsers([...new Set(rows.map((r) => r.user_id))]);
   const myVotes = req.user
-    ? new Map(Reviews.votesBy(req.user.id, game.id).map((v) => [v.review_id, v.helpful === 1]))
+    ? new Map((await Reviews.votesBy(req.user.id, game.id)).map((v) => [v.review_id, v.helpful === 1]))
     : new Map();
 
   const items = rows.map((r) => {
@@ -96,18 +99,20 @@ router.get('/games/:id/reviews', (req, res) => {
     split: verdictSplit(items.filter((i) => !i.author.isMe)),
     myReview: req.user ? items.find((i) => i.author.isMe)?.id ?? null : null,
   });
+  } catch (err) { next(err); }
 });
 
-router.post('/games/:id/reviews', requireAuth, writeLimit, (req, res) => {
+router.post('/games/:id/reviews', requireAuth, writeLimit, async (req, res, next) => {
+  try {
   const game = byId.get(req.params.id);
   if (!game) return res.status(404).json({ error: 'not_found', message: 'No such game.' });
 
   const { errors, value } = validateReview(req.body ?? {});
   if (Object.keys(errors).length) return res.status(400).json({ error: 'invalid', fields: errors });
 
-  const existing = Reviews.mine(req.user.id, game.id);
+  const existing = await Reviews.mine(req.user.id, game.id);
   const now = Date.now();
-  Reviews.upsert({
+  await Reviews.upsert({
     id: existing?.id ?? randomUUID(),
     user_id: req.user.id,
     game_id: game.id,
@@ -118,38 +123,45 @@ router.post('/games/:id/reviews', requireAuth, writeLimit, (req, res) => {
     updated_at: now,
   });
   res.status(existing ? 200 : 201).json({ ok: true, updated: !!existing });
+  } catch (err) { next(err); }
 });
 
-router.delete('/games/:id/reviews', requireAuth, (req, res) => {
-  const existing = Reviews.mine(req.user.id, req.params.id);
-  if (!existing) return res.status(404).json({ error: 'not_found', message: 'You have no review here.' });
-  Reviews.remove(existing.id, req.user.id);
-  res.json({ ok: true });
+router.delete('/games/:id/reviews', requireAuth, async (req, res, next) => {
+  try {
+    const existing = await Reviews.mine(req.user.id, req.params.id);
+    if (!existing) return res.status(404).json({ error: 'not_found', message: 'You have no review here.' });
+    await Reviews.remove(existing.id, req.user.id);
+    res.json({ ok: true });
+  } catch (err) { next(err); }
 });
 
-router.post('/reviews/:id/vote', requireAuth, (req, res) => {
-  const review = Reviews.byId(req.params.id);
+router.post('/reviews/:id/vote', requireAuth, async (req, res, next) => {
+  try {
+  const review = await Reviews.byId(req.params.id);
   if (!review) return res.status(404).json({ error: 'not_found', message: 'No such review.' });
   if (review.user_id === req.user.id) {
     return res.status(400).json({ error: 'own_review', message: "You can't vote on your own review." });
   }
   const { helpful } = req.body ?? {};
   // null clears the vote, so the button can toggle off.
-  if (helpful === null) Reviews.unvote(review.id, req.user.id);
-  else if (typeof helpful === 'boolean') Reviews.vote(review.id, req.user.id, helpful);
+  if (helpful === null) await Reviews.unvote(review.id, req.user.id);
+  else if (typeof helpful === 'boolean') await Reviews.vote(review.id, req.user.id, helpful);
   else return res.status(400).json({ error: 'bad_vote', message: 'helpful must be true, false or null.' });
   res.json({ ok: true });
+  } catch (err) { next(err); }
 });
 
-router.post('/reviews/:id/report', requireAuth, (req, res) => {
-  const review = Reviews.byId(req.params.id);
+router.post('/reviews/:id/report', requireAuth, async (req, res, next) => {
+  try {
+  const review = await Reviews.byId(req.params.id);
   if (!review) return res.status(404).json({ error: 'not_found', message: 'No such review.' });
   const reason = String(req.body?.reason ?? '');
   if (!REPORT_REASONS.includes(reason)) {
     return res.status(400).json({ error: 'bad_reason', message: `reason must be one of ${REPORT_REASONS.join(', ')}` });
   }
-  const hidden = Reviews.report(review.id, req.user.id, reason);
+  const hidden = await Reviews.report(review.id, req.user.id, reason);
   res.json({ ok: true, hidden, threshold: REPORT_THRESHOLD });
+  } catch (err) { next(err); }
 });
 
 export default router;

@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 
-import { migrate, Sessions, db, IS_EPHEMERAL } from './lib/db.js';
+import { migrate, Sessions, Users, IS_EPHEMERAL, storageSummary } from './lib/db.js';
 import { attachUser, verifyOrigin } from './middleware.js';
 import { sessionInfo } from './lib/auth.js';
 import authRoutes from './routes/auth.js';
@@ -24,20 +24,21 @@ const ORIGINS = (process.env.ALLOWED_ORIGINS || `http://localhost:${PORT}`)
 
 const catalogHas = (id) => byId.has(id);
 
-migrate();
+await migrate();
 
 /**
- * On an ephemeral filesystem the database is empty on every cold start, so
- * populate it with the demo content rather than showing an empty site. Local
- * runs are untouched: there the database persists and is seeded explicitly
- * with `npm run db:demo`.
+ * Seed the demo content when the store comes up empty.
+ *
+ * On an ephemeral filesystem that is every cold start. With a real database
+ * it happens once, on the first deploy, and never again -- which is exactly
+ * what we want either way.
  */
-if (IS_EPHEMERAL) {
-  const { n } = db.prepare('SELECT COUNT(*) AS n FROM users').get();
-  if (n === 0) {
+if (process.env.SEED_ON_EMPTY !== 'false') {
+  const users = await Users.count();
+  if (users === 0) {
     const { seedDemoData } = await import('./lib/demo.js');
     await seedDemoData({ quiet: true });
-    console.log('[boot] ephemeral filesystem detected: demo data seeded');
+    console.log(`[boot] empty ${storageSummary().backend} store: demo data seeded`);
   }
 }
 
@@ -88,6 +89,7 @@ app.get('/api/health', (_req, res) => res.json({
   // Which session strategy is active, and where its signing key came from.
   // If keySource is ever "dev-default" on a deployment, sessions are broken.
   session: sessionInfo(),
+  storage: storageSummary(),
 }));
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'not_found' }));
@@ -128,9 +130,13 @@ app.use((err, _req, res, _next) => {
 });
 
 // Housekeeping: drop expired sessions hourly.
-setInterval(() => {
-  const n = Sessions.purgeExpired();
-  if (n) console.log(`[sessions] purged ${n} expired`);
+setInterval(async () => {
+  try {
+    const n = await Sessions.purgeExpired();
+    if (n) console.log(`[sessions] purged ${n} expired`);
+  } catch (err) {
+    console.error('[sessions] purge failed:', err.message);
+  }
 }, 60 * 60e3).unref();
 
 export default app;
@@ -141,7 +147,10 @@ export default app;
  */
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const server = app.listen(PORT, () => {
-    console.log(`Playstyle running on http://localhost:${PORT}  (${stats.games} games, ${stats.features} tags)`);
+    const store = storageSummary();
+    console.log(`Playstyle running on http://localhost:${PORT}`
+      + `  (${stats.games} games, ${stats.features} tags, ${store.backend}`
+      + `${store.durable ? '' : ', ephemeral'})`);
   });
   for (const sig of ['SIGINT', 'SIGTERM']) {
     process.on(sig, () => { server.close(() => process.exit(0)); });

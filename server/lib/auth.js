@@ -19,13 +19,18 @@ import { randomBytes, createHmac, timingSafeEqual } from 'node:crypto';
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { Users, Sessions, Feedback } from './db.js';
+import { Users, Sessions, Feedback, IS_EPHEMERAL } from './db.js';
 
 const BCRYPT_ROUNDS = 12;
 const SESSION_DAYS = 30;
 export const COOKIE = 'ps_session';
 
-const EPHEMERAL_HOST = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+/**
+ * Stateless cookies exist only because a serverless container's SQLite file
+ * is private to it. With a real shared database the sessions table works, so
+ * this follows storage durability rather than the hosting model.
+ */
+const EPHEMERAL_HOST = IS_EPHEMERAL;
 
 const KEY_FILE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '.session-key');
 
@@ -104,11 +109,11 @@ function signPayload(payload) {
   return `${body}.${mac}`;
 }
 
-function buildPayload(userId, expiresAt) {
-  const user = Users.byId(userId);
+async function buildPayload(userId, expiresAt) {
+  const user = await Users.byId(userId);
   if (!user) return null;
   const picks = {};
-  for (const row of Feedback.forUser(userId).slice(0, CARRIED_PICKS)) {
+  for (const row of (await Feedback.forUser(userId)).slice(0, CARRIED_PICKS)) {
     picks[row.game_id] = row.signal;
   }
   return {
@@ -138,9 +143,9 @@ const getUnusableHash = () => {
  * seen it. Only ever called with a payload whose signature we just verified,
  * so the data is ours and trustworthy.
  */
-function materialise(payload) {
+async function materialise(payload) {
   try {
-    Users.create({
+    await Users.create({
       id: payload.i,
       email: payload.e,
       username: payload.u,
@@ -150,10 +155,10 @@ function materialise(payload) {
       password_hash: getUnusableHash(),
       created_at: Date.now(),
     });
-    if (payload.o) Users.markOnboarded(payload.i);
+    if (payload.o) await Users.markOnboarded(payload.i);
     const entries = Object.entries(payload.p ?? {})
       .map(([gameId, signal]) => ({ gameId, signal }));
-    if (entries.length) Feedback.setMany(payload.i, entries, Date.now());
+    if (entries.length) await Feedback.setMany(payload.i, entries, Date.now());
     return Users.byId(payload.i);
   } catch {
     // A concurrent request may have created it first; re-read either way.
@@ -172,20 +177,20 @@ function materialise(payload) {
  * Writes only when the two actually differ, so a normal read costs one
  * indexed query.
  */
-function reconcilePicks(payload) {
+async function reconcilePicks(payload) {
   const carried = payload.p ?? {};
   const carriedKeys = Object.keys(carried);
   if (!carriedKeys.length) return;
   try {
-    const current = Feedback.forUser(payload.i);
+    const current = await Feedback.forUser(payload.i);
     const same = current.length === carriedKeys.length
       && current.every((row) => carried[row.game_id] === row.signal);
     if (same) return;
 
     for (const row of current) {
-      if (!(row.game_id in carried)) Feedback.clear(payload.i, row.game_id);
+      if (!(row.game_id in carried)) await Feedback.clear(payload.i, row.game_id);
     }
-    Feedback.setMany(
+    await Feedback.setMany(
       payload.i,
       carriedKeys.map((gameId) => ({ gameId, signal: carried[gameId] })),
       Date.now(),
@@ -195,7 +200,7 @@ function reconcilePicks(payload) {
   }
 }
 
-function verifyStateless(token) {
+async function verifyStateless(token) {
   const parts = token.split('.');
   const version = parts[0];
 
@@ -210,7 +215,7 @@ function verifyStateless(token) {
     if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) return null;
     let userId;
     try { userId = unb64(encodedId); } catch { return null; }
-    const user = Users.byId(userId);
+    const user = await Users.byId(userId);
     return user ? { expires_at: expiresAt, ...user } : null;
   }
 
@@ -223,9 +228,9 @@ function verifyStateless(token) {
   try { payload = JSON.parse(unb64(encoded)); } catch { return null; }
   if (!payload?.i || !Number.isFinite(payload.x) || payload.x < Date.now()) return null;
 
-  const user = Users.byId(payload.i) ?? materialise(payload);
+  const user = (await Users.byId(payload.i)) ?? (await materialise(payload));
   if (!user) return null;
-  reconcilePicks(payload);
+  await reconcilePicks(payload);
   return {
     expires_at: payload.x,
     id: user.id, email: user.email, username: user.username,
@@ -235,13 +240,13 @@ function verifyStateless(token) {
 
 /* ------------------------------- lifecycle -------------------------------- */
 
-export function startSession(res, userId, userAgent) {
+export async function startSession(res, userId, userAgent) {
   const now = Date.now();
   const expires = now + SESSION_DAYS * 864e5;
 
   let token;
   if (SESSION_MODE === 'stateless') {
-    const payload = buildPayload(userId, expires);
+    const payload = await buildPayload(userId, expires);
     if (!payload) throw new Error(`cannot start a session for unknown user ${userId}`);
     token = signPayload(payload);
   } else {
@@ -249,7 +254,7 @@ export function startSession(res, userId, userAgent) {
   }
 
   if (SESSION_MODE === 'database') {
-    Sessions.create(hashToken(token), userId, now, expires, (userAgent || '').slice(0, 200));
+    await Sessions.create(hashToken(token), userId, now, expires, (userAgent || '').slice(0, 200));
   }
 
   res.cookie(COOKIE, token, {
@@ -262,23 +267,23 @@ export function startSession(res, userId, userAgent) {
   return token;
 }
 
-export function readSession(token) {
+export async function readSession(token) {
   if (!token) return null;
   // Read whichever format the cookie is in, so a mode change (or a redeploy)
   // does not hard-fail on a cookie the browser is still holding.
   if (isStatelessToken(token)) return verifyStateless(token);
-  const row = Sessions.find(hashToken(token));
+  const row = await Sessions.find(hashToken(token));
   if (!row) return null;
   if (row.expires_at < Date.now()) {
-    Sessions.destroy(hashToken(token));
+    await Sessions.destroy(hashToken(token));
     return null;
   }
   return row;
 }
 
-export function endSession(res, token) {
+export async function endSession(res, token) {
   // A stateless cookie has no server-side row; clearing it is the logout.
-  if (token && !isStatelessToken(token)) Sessions.destroy(hashToken(token));
+  if (token && !isStatelessToken(token)) await Sessions.destroy(hashToken(token));
   res.clearCookie(COOKIE, { path: '/' });
 }
 
@@ -286,10 +291,10 @@ export function endSession(res, token) {
  * Re-issue the cookie so the ratings it carries stay current.
  * A no-op in database mode, where the cookie holds no account data.
  */
-export function refreshSession(res, userId) {
+export async function refreshSession(res, userId) {
   if (SESSION_MODE !== 'stateless' || !res || !userId) return;
   try {
-    startSession(res, userId);
+    await startSession(res, userId);
   } catch {
     // Never let a cookie refresh break the request that triggered it.
   }

@@ -27,9 +27,10 @@ const writeLimit = rateLimit({
  * a wall of 134 franchises they have no connection to is not a community,
  * and empty hubs are what kill this kind of feature.
  */
-router.get('/hubs', (req, res) => {
-  const members = Hubs.memberCounts();
-  const posts = Hubs.postCounts();
+router.get('/hubs', async (req, res, next) => {
+  try {
+  const members = await Hubs.memberCounts();
+  const posts = await Hubs.postCounts();
   const decorate = (hub) => ({
     ...hubBrief(hub),
     memberCount: members.get(hub.slug) ?? 0,
@@ -38,9 +39,9 @@ router.get('/hubs', (req, res) => {
 
   let mine = [];
   if (req.user) {
-    const rows = Feedback.forUser(req.user.id);
+    const rows = await Feedback.forUser(req.user.id);
     const liked = rows.filter((r) => r.signal !== 'meh').map((r) => r.game_id);
-    const joined = new Set(Hubs.mine(req.user.id));
+    const joined = new Set(await Hubs.mine(req.user.id));
     const relevant = new Map(hubsForGames(liked).map((h) => [h.slug, h]));
     for (const slug of joined) if (hubs.has(slug)) relevant.set(slug, hubs.get(slug));
     mine = [...relevant.values()].map((h) => ({ ...decorate(h), joined: joined.has(h.slug) }));
@@ -59,17 +60,19 @@ router.get('/hubs', (req, res) => {
     .slice(0, 24);
 
   res.json({ mine, active, browse, total: hubList.length });
+  } catch (err) { next(err); }
 });
 
 /** One hub: its games, its posts, and who is in it. */
-router.get('/hubs/:slug', (req, res) => {
+router.get('/hubs/:slug', async (req, res, next) => {
+  try {
   const hub = hubs.get(req.params.slug);
   if (!hub) return res.status(404).json({ error: 'not_found', message: 'No such fandom.' });
 
-  const rows = Posts.forHub(hub.slug);
-  const viewerRows = req.user ? Feedback.forUser(req.user.id) : null;
-  const tasteByUser = Feedback.forUsers([...new Set(rows.map((r) => r.user_id))]);
-  const myVotes = req.user ? Posts.myVotes(req.user.id, hub.slug) : new Set();
+  const rows = await Posts.forHub(hub.slug);
+  const viewerRows = req.user ? await Feedback.forUser(req.user.id) : null;
+  const tasteByUser = await Feedback.forUsers([...new Set(rows.map((r) => r.user_id))]);
+  const myVotes = req.user ? await Posts.myVotes(req.user.id, hub.slug) : new Set();
 
   const items = rows.map((r) => ({
     id: r.id,
@@ -90,6 +93,7 @@ router.get('/hubs/:slug', (req, res) => {
     tasteMatch: viewerRows?.length ? matchBetween(viewerRows, tasteByUser.get(r.user_id) ?? []) : null,
   }));
 
+  const members = await Hubs.memberCounts();
   const sort = ['hot', 'new', 'top'].includes(req.query.sort) ? req.query.sort : 'hot';
   const now = Date.now();
   const order = {
@@ -104,24 +108,28 @@ router.get('/hubs/:slug', (req, res) => {
     hub: { slug: hub.slug, name: hub.name, tags: hub.tags, games: hub.games },
     posts: items,
     sort,
-    memberCount: Hubs.memberCounts().get(hub.slug) ?? 0,
-    joined: req.user ? Hubs.isMember(hub.slug, req.user.id) : false,
+    memberCount: members.get(hub.slug) ?? 0,
+    joined: req.user ? await Hubs.isMember(hub.slug, req.user.id) : false,
   });
+  } catch (err) { next(err); }
 });
 
-router.post('/hubs/:slug/join', requireAuth, (req, res) => {
-  if (!hubs.has(req.params.slug)) return res.status(404).json({ error: 'not_found', message: 'No such fandom.' });
-  const leaving = req.body?.leave === true;
-  if (leaving) Hubs.leave(req.params.slug, req.user.id);
-  else Hubs.join(req.params.slug, req.user.id);
-  res.json({
-    ok: true,
-    joined: !leaving,
-    memberCount: Hubs.memberCounts().get(req.params.slug) ?? 0,
-  });
+router.post('/hubs/:slug/join', requireAuth, async (req, res, next) => {
+  try {
+    if (!hubs.has(req.params.slug)) return res.status(404).json({ error: 'not_found', message: 'No such fandom.' });
+    const leaving = req.body?.leave === true;
+    if (leaving) await Hubs.leave(req.params.slug, req.user.id);
+    else await Hubs.join(req.params.slug, req.user.id);
+    res.json({
+      ok: true,
+      joined: !leaving,
+      memberCount: (await Hubs.memberCounts()).get(req.params.slug) ?? 0,
+    });
+  } catch (err) { next(err); }
 });
 
-router.post('/hubs/:slug/posts', requireAuth, writeLimit, (req, res) => {
+router.post('/hubs/:slug/posts', requireAuth, writeLimit, async (req, res, next) => {
+  try {
   if (!hubs.has(req.params.slug)) return res.status(404).json({ error: 'not_found', message: 'No such fandom.' });
 
   const title = clean(req.body?.title);
@@ -135,40 +143,46 @@ router.post('/hubs/:slug/posts', requireAuth, writeLimit, (req, res) => {
 
   const now = Date.now();
   const id = randomUUID();
-  Posts.create({ id, franchise: req.params.slug, user_id: req.user.id, title, body, created_at: now, updated_at: now });
+  await Posts.create({ id, franchise: req.params.slug, user_id: req.user.id, title, body, created_at: now, updated_at: now });
   // Posting in a hub joins it: opting in by participating is less friction
   // than asking someone to press Join first.
-  Hubs.join(req.params.slug, req.user.id, now);
+  await Hubs.join(req.params.slug, req.user.id, now);
   res.status(201).json({ ok: true, id });
+  } catch (err) { next(err); }
 });
 
-router.delete('/posts/:id', requireAuth, (req, res) => {
-  const post = Posts.byId(req.params.id);
+router.delete('/posts/:id', requireAuth, async (req, res, next) => {
+  try {
+  const post = await Posts.byId(req.params.id);
   if (!post) return res.status(404).json({ error: 'not_found', message: 'No such post.' });
-  if (!Posts.remove(post.id, req.user.id)) {
+  if (!await Posts.remove(post.id, req.user.id)) {
     return res.status(403).json({ error: 'not_yours', message: 'That is not your post.' });
   }
   res.json({ ok: true });
+  } catch (err) { next(err); }
 });
 
-router.post('/posts/:id/vote', requireAuth, (req, res) => {
-  const post = Posts.byId(req.params.id);
+router.post('/posts/:id/vote', requireAuth, async (req, res, next) => {
+  try {
+  const post = await Posts.byId(req.params.id);
   if (!post) return res.status(404).json({ error: 'not_found', message: 'No such post.' });
   if (post.user_id === req.user.id) {
     return res.status(400).json({ error: 'own_post', message: "You can't upvote your own post." });
   }
-  if (req.body?.up === false) Posts.unvote(post.id, req.user.id);
-  else Posts.vote(post.id, req.user.id);
+  if (req.body?.up === false) await Posts.unvote(post.id, req.user.id);
+  else await Posts.vote(post.id, req.user.id);
   res.json({ ok: true });
+  } catch (err) { next(err); }
 });
 
-router.get('/posts/:id/comments', (req, res) => {
-  const post = Posts.byId(req.params.id);
+router.get('/posts/:id/comments', async (req, res, next) => {
+  try {
+  const post = await Posts.byId(req.params.id);
   if (!post) return res.status(404).json({ error: 'not_found', message: 'No such post.' });
 
-  const rows = Posts.comments(post.id);
-  const viewerRows = req.user ? Feedback.forUser(req.user.id) : null;
-  const tasteByUser = Feedback.forUsers([...new Set(rows.map((r) => r.user_id))]);
+  const rows = await Posts.comments(post.id);
+  const viewerRows = req.user ? await Feedback.forUser(req.user.id) : null;
+  const tasteByUser = await Feedback.forUsers([...new Set(rows.map((r) => r.user_id))]);
 
   res.json({
     items: rows.map((c) => ({
@@ -183,28 +197,33 @@ router.get('/posts/:id/comments', (req, res) => {
       tasteMatch: viewerRows?.length ? matchBetween(viewerRows, tasteByUser.get(c.user_id) ?? []) : null,
     })),
   });
+  } catch (err) { next(err); }
 });
 
-router.post('/posts/:id/comments', requireAuth, writeLimit, (req, res) => {
-  const post = Posts.byId(req.params.id);
+router.post('/posts/:id/comments', requireAuth, writeLimit, async (req, res, next) => {
+  try {
+  const post = await Posts.byId(req.params.id);
   if (!post) return res.status(404).json({ error: 'not_found', message: 'No such post.' });
 
   const body = clean(req.body?.body);
   if (body.length < COMMENT_MIN) return res.status(400).json({ error: 'invalid', fields: { body: 'Say something.' } });
   if (body.length > COMMENT_MAX) return res.status(400).json({ error: 'invalid', fields: { body: `Under ${COMMENT_MAX} characters.` } });
 
-  Posts.addComment({ id: randomUUID(), post_id: post.id, user_id: req.user.id, body, created_at: Date.now() });
-  Hubs.join(post.franchise, req.user.id);
+  await Posts.addComment({ id: randomUUID(), post_id: post.id, user_id: req.user.id, body, created_at: Date.now() });
+  await Hubs.join(post.franchise, req.user.id);
   res.status(201).json({ ok: true });
+  } catch (err) { next(err); }
 });
 
-router.delete('/comments/:id', requireAuth, (req, res) => {
-  const comment = Posts.commentById(req.params.id);
-  if (!comment) return res.status(404).json({ error: 'not_found', message: 'No such comment.' });
-  if (!Posts.removeComment(comment.id, req.user.id)) {
-    return res.status(403).json({ error: 'not_yours', message: 'That is not your comment.' });
-  }
-  res.json({ ok: true });
+router.delete('/comments/:id', requireAuth, async (req, res, next) => {
+  try {
+    const comment = await Posts.commentById(req.params.id);
+    if (!comment) return res.status(404).json({ error: 'not_found', message: 'No such comment.' });
+    if (!await Posts.removeComment(comment.id, req.user.id)) {
+      return res.status(403).json({ error: 'not_yours', message: 'That is not your comment.' });
+    }
+    res.json({ ok: true });
+  } catch (err) { next(err); }
 });
 
 export default router;

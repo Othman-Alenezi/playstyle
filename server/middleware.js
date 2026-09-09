@@ -1,10 +1,20 @@
 import { COOKIE, readSession } from './lib/auth.js';
 
 /** Resolve the session cookie into req.user (or null) on every request. */
-export function attachUser(req, _res, next) {
-  const row = readSession(req.cookies?.[COOKIE]);
-  req.user = row ? { id: row.id, email: row.email, username: row.username, onboarded: !!row.onboarded } : null;
-  next();
+export async function attachUser(req, _res, next) {
+  try {
+    const row = await readSession(req.cookies?.[COOKIE]);
+    req.user = row
+      ? { id: row.id, email: row.email, username: row.username, onboarded: !!row.onboarded }
+      : null;
+    next();
+  } catch (err) {
+    // A database blip must not make every request throw; treat it as signed out
+    // and let the route decide whether that is fatal.
+    console.error('[auth] session lookup failed:', err.message);
+    req.user = null;
+    next();
+  }
 }
 
 export function requireAuth(req, res, next) {

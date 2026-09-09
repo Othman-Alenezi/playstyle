@@ -11,11 +11,22 @@
  */
 import { randomUUID, createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
-import { migrate, db, Users, Feedback, Reviews, Hubs, Posts } from './db.js';
+import { migrate, Users, Feedback, Reviews, Hubs, Posts } from './db.js';
 import { hashPassword } from './auth.js';
 import { byId } from './catalog.js';
 
 export const DEMO_PASSWORD = 'demo-account-not-for-production';
+
+/** A key cannot appear twice in one multi-row insert. Keeps the first. */
+const dedupeBy = (rows, key) => {
+  const seen = new Set();
+  return rows.filter((r) => {
+    const k = key(r);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+};
 
 /**
  * Demo ids are derived from the username rather than random.
@@ -778,93 +789,106 @@ const POSTS = [
 ];
 
 export async function seedDemoData({ quiet = false } = {}) {
-  migrate();
+  await migrate();
   const log = quiet ? () => {} : console.log;
 
   const missing = REVIEWS.filter(([, gameId]) => !byId.has(gameId)).map(([, g]) => g);
   if (missing.length) throw new Error(`demo reviews reference unknown games: ${[...new Set(missing)].join(', ')}`);
 
   const password_hash = await hashPassword(DEMO_PASSWORD);
-  const ids = new Map();
+  const now = Date.now();
+  const ids = new Map(PEOPLE.map((p) => [p.username, stableId(p.username)]));
 
-  const seedPeople = db.transaction(() => {
-    for (const person of PEOPLE) {
-      const existing = Users.byUsername(person.username);
-      const id = existing?.id ?? stableId(person.username);
-      if (!existing) {
-        Users.create({
-          id, email: `${person.username}@demo.playstyle.local`,
-          username: person.username, password_hash, created_at: Date.now(),
-        });
-      }
-      ids.set(person.username, id);
-      const bad = person.loves.filter((g) => !byId.has(g));
-      if (bad.length) throw new Error(`${person.username} loves unknown games: ${bad.join(', ')}`);
-      Feedback.setMany(id, person.loves.map((gameId) => ({ gameId, signal: 'love' })), Date.now());
-      Users.markOnboarded(id);
-    }
-  });
-  seedPeople();
+  // Everything is derived, so the whole dataset can be built in memory and
+  // written with one statement per table. Seeding row-by-row meant roughly
+  // 2400 round trips, which is fine against a local file and far too slow
+  // across a network.
+  for (const person of PEOPLE) {
+    const bad = person.loves.filter((g) => !byId.has(g));
+    if (bad.length) throw new Error(`${person.username} loves unknown games: ${bad.join(', ')}`);
+  }
 
-  const seedReviews = db.transaction(() => {
-    for (const [username, game_id, verdict, hours, body] of REVIEWS) {
-      const user_id = ids.get(username);
-      if (!user_id) throw new Error(`review by unknown demo user: ${username}`);
-      const existing = Reviews.mine(user_id, game_id);
-      const now = Date.now();
-      Reviews.upsert({
-        id: existing?.id ?? stableId(`review:${username}:${game_id}`),
-        user_id, game_id, verdict, body, hours,
-        created_at: existing?.created_at ?? now, updated_at: now,
+  await Users.createMany(PEOPLE.map((person) => ({
+    id: ids.get(person.username),
+    email: `${person.username}@demo.playstyle.local`,
+    username: person.username,
+    password_hash,
+    created_at: now,
+    onboarded: true,
+  })));
+
+  for (const person of PEOPLE) {
+    await Feedback.setMany(
+      ids.get(person.username),
+      person.loves.map((gameId) => ({ gameId, signal: 'love' })),
+      now,
+    );
+  }
+
+  // One review per person per game is a unique constraint, and a multi-row
+  // upsert that touches the same key twice is a hard error in Postgres
+  // ("cannot affect row a second time"). SQLite quietly kept the last write,
+  // so ten duplicate pairs in the list above had been discarded unnoticed.
+  // Deduplicate explicitly, keeping the last, and say so.
+  const reviewRows = new Map();
+  for (const [username, game_id, verdict, hours, body] of REVIEWS) {
+    const user_id = ids.get(username);
+    if (!user_id) throw new Error(`review by unknown demo user: ${username}`);
+    reviewRows.set(`${user_id}\u0000${game_id}`, {
+      id: stableId(`review:${username}:${game_id}`),
+      user_id, game_id, verdict, body, hours,
+      created_at: now, updated_at: now,
+    });
+  }
+  const dropped = REVIEWS.length - reviewRows.size;
+  if (dropped) log(`  note: ${dropped} duplicate (reviewer, game) pairs collapsed`);
+  await Reviews.upsertMany([...reviewRows.values()]);
+
+  const postRows = [];
+  const commentRows = [];
+  const voteRows = [];
+  const memberRows = [];
+
+  for (const [author, franchise, title, body, comments] of POSTS) {
+    const user_id = ids.get(author);
+    if (!user_id) throw new Error(`post by unknown demo user: ${author}`);
+    const postId = stableId(`post:${author}:${franchise}:${title}`);
+    postRows.push({ id: postId, franchise, user_id, title, body, created_at: now, updated_at: now });
+    memberRows.push({ franchise, user_id, created_at: now });
+
+    for (const [commenter, text] of comments ?? []) {
+      const cid = ids.get(commenter);
+      if (!cid) throw new Error(`comment by unknown demo user: ${commenter}`);
+      commentRows.push({
+        id: stableId(`comment:${commenter}:${postId}:${text.slice(0, 40)}`),
+        post_id: postId, user_id: cid, body: text, created_at: now,
       });
+      memberRows.push({ franchise, user_id: cid, created_at: now });
     }
-  });
-  seedReviews();
 
-  // Fandom hub posts and comments.
-  const seedHubs = db.transaction(() => {
-    for (const [author, franchise, title, body, comments] of POSTS) {
-      const user_id = ids.get(author);
-      if (!user_id) throw new Error(`post by unknown demo user: ${author}`);
-      // Idempotent: skip if this author already posted this title here.
-      const already = Posts.forHub(franchise).find((p) => p.title === title);
-      const now = Date.now();
-      const postId = already?.id ?? stableId(`post:${author}:${franchise}:${title}`);
-      if (!already) {
-        Posts.create({ id: postId, franchise, user_id, title, body, created_at: now, updated_at: now });
-      }
-      Hubs.join(franchise, user_id, now);
-
-      const existing = new Set(Posts.comments(postId).map((c) => c.body));
-      for (const [commenter, text] of comments ?? []) {
-        const cid = ids.get(commenter);
-        if (!cid) throw new Error(`comment by unknown demo user: ${commenter}`);
-        if (!existing.has(text)) {
-          Posts.addComment({
-            id: stableId(`comment:${commenter}:${postId}:${text.slice(0, 40)}`),
-            post_id: postId, user_id: cid, body: text, created_at: Date.now(),
-          });
-        }
-        Hubs.join(franchise, cid, Date.now());
-      }
-      // Derived, not random: two containers must agree on the vote counts or
-      // the same page shows different numbers depending on who serves it.
-      for (const [name, other] of ids) {
-        if (other === user_id) continue;
-        const draw = parseInt(createHash('sha256').update(`vote:${name}:${postId}`).digest('hex').slice(0, 4), 16);
-        if (draw % 100 < 45) Posts.vote(postId, other);
-      }
+    // Derived, not random: two servers must agree on the vote counts or the
+    // same page shows different numbers depending on which one answers.
+    for (const [name, other] of ids) {
+      if (other === user_id) continue;
+      const draw = parseInt(createHash('sha256').update(`vote:${name}:${postId}`).digest('hex').slice(0, 4), 16);
+      if (draw % 100 < 45) voteRows.push({ post_id: postId, user_id: other, created_at: now });
     }
-  });
-  seedHubs();
+  }
+
+  // Same hazard as the reviews: every one of these tables has a composite or
+  // unique key, so a duplicate inside a single statement would fail.
+  await Posts.createMany(dedupeBy(postRows, (r) => r.id));
+  await Posts.addCommentMany(dedupeBy(commentRows, (r) => r.id));
+  await Posts.voteMany(dedupeBy(voteRows, (r) => `${r.post_id}\u0000${r.user_id}`));
+  await Hubs.joinMany(dedupeBy(memberRows, (r) => `${r.franchise}\u0000${r.user_id}`));
 
   const games = new Set(REVIEWS.map(([, g]) => g));
   const hubSlugs = new Set(POSTS.map(([, f]) => f));
-  log(`Demo data ready: ${PEOPLE.length} accounts, ${REVIEWS.length} reviews across ${games.size} games,`
+  log(`Demo data ready: ${PEOPLE.length} accounts, ${reviewRows.size} reviews across ${games.size} games,`
     + ` ${POSTS.length} hub posts across ${hubSlugs.size} fandoms.`);
   log(`Sign in as any of them with password: ${DEMO_PASSWORD}`);
   log('Games with reviews:', [...games].join(', '));
-  return { accounts: PEOPLE.length, reviews: REVIEWS.length, posts: POSTS.length };
+  return { accounts: PEOPLE.length, reviews: reviewRows.size, posts: POSTS.length };
 }
 
 // Only run as a CLI when invoked directly.

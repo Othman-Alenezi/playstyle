@@ -27,15 +27,17 @@ router.post('/preview', (req, res) => {
   res.json({ items, profile: tasteProfile(rows, 6) });
 });
 
-router.post('/seed', requireAuth, (req, res) => {
-  const ids = cleanIds(req.body?.gameIds);
-  if (!ids.length) return res.status(400).json({ error: 'need_picks', message: 'Pick at least one game.' });
-  Feedback.setMany(req.user.id, ids.map((gameId) => ({ gameId, signal: 'love' })), Date.now());
-  Users.markOnboarded(req.user.id);
-  // Keep the ratings carried in the session cookie in step with the database,
-  // so a container that has to rebuild this account rebuilds it complete.
-  refreshSession(res, req.user.id);
-  res.json({ ok: true, saved: ids.length });
+router.post('/seed', requireAuth, async (req, res, next) => {
+  try {
+    const ids = cleanIds(req.body?.gameIds);
+    if (!ids.length) return res.status(400).json({ error: 'need_picks', message: 'Pick at least one game.' });
+    await Feedback.setMany(req.user.id, ids.map((gameId) => ({ gameId, signal: 'love' })), Date.now());
+    await Users.markOnboarded(req.user.id);
+    // Keep the ratings carried in the session cookie in step with the database,
+    // so a container that has to rebuild this account rebuilds it complete.
+    await refreshSession(res, req.user.id);
+    res.json({ ok: true, saved: ids.length });
+  } catch (err) { next(err); }
 });
 
 /**
@@ -46,66 +48,76 @@ router.post('/seed', requireAuth, (req, res) => {
  * (wishlist, played, not-for-me) are left alone, so re-running the quiz does
  * not wipe ratings made from the feed.
  */
-router.put('/library', requireAuth, (req, res) => {
+router.put('/library', requireAuth, async (req, res, next) => {
+  try {
   const wanted = new Set(cleanIds(req.body?.gameIds));
-  const rows = Feedback.forUser(req.user.id);
+  const rows = await Feedback.forUser(req.user.id);
 
   let removed = 0;
   for (const row of rows) {
     if (row.signal === 'love' && !wanted.has(row.game_id)) {
-      Feedback.clear(req.user.id, row.game_id);
+      await Feedback.clear(req.user.id, row.game_id);
       removed++;
     }
   }
   const existing = new Set(rows.map((r) => r.game_id));
   const added = [...wanted].filter((id) => !existing.has(id));
   if (added.length) {
-    Feedback.setMany(req.user.id, added.map((gameId) => ({ gameId, signal: 'love' })), Date.now());
+    await Feedback.setMany(req.user.id, added.map((gameId) => ({ gameId, signal: 'love' })), Date.now());
   }
-  if (wanted.size) Users.markOnboarded(req.user.id);
-  refreshSession(res, req.user.id);
+  if (wanted.size) await Users.markOnboarded(req.user.id);
+  await refreshSession(res, req.user.id);
 
-  const now = Feedback.forUser(req.user.id);
+  const now = await Feedback.forUser(req.user.id);
   res.json({ ok: true, added: added.length, removed, total: now.length, profile: tasteProfile(now) });
+  } catch (err) { next(err); }
 });
 
-router.get('/profile', requireAuth, (req, res) => {
-  const rows = Feedback.forUser(req.user.id);
+router.get('/profile', requireAuth, async (req, res, next) => {
+  try {
+  const rows = await Feedback.forUser(req.user.id);
   res.json({
     profile: tasteProfile(rows),
     library: rows.map((r) => ({ ...publicGame(byId.get(r.game_id) ?? { id: r.game_id, title: r.game_id, genres: [], tags: [] }), signal: r.signal })),
     counts: rows.reduce((acc, r) => ({ ...acc, [r.signal]: (acc[r.signal] ?? 0) + 1 }), {}),
   });
+  } catch (err) { next(err); }
 });
 
-router.get('/recommendations', requireAuth, (req, res) => {
-  const rows = Feedback.forUser(req.user.id);
+router.get('/recommendations', requireAuth, async (req, res, next) => {
+  try {
+  const rows = await Feedback.forUser(req.user.id);
   if (!rows.length) {
     return res.json({ items: [], needsOnboarding: true, profile: { top: [], genres: [], seeds: [] } });
   }
   const limit = Math.min(Math.max(Number(req.query.limit) || 12, 1), 24);
   const { items } = recommend(rows, { limit });
   res.json({ items, needsOnboarding: false, profile: tasteProfile(rows) });
+  } catch (err) { next(err); }
 });
 
-router.post('/feedback', requireAuth, (req, res) => {
+router.post('/feedback', requireAuth, async (req, res, next) => {
+  try {
   const { gameId, signal } = req.body ?? {};
   if (!byId.has(gameId)) return res.status(404).json({ error: 'not_found', message: 'No such game.' });
   if (!SIGNALS.includes(signal)) {
     return res.status(400).json({ error: 'bad_signal', message: `signal must be one of ${SIGNALS.join(', ')}` });
   }
-  Feedback.set(req.user.id, gameId, signal);
-  refreshSession(res, req.user.id);
-  const rows = Feedback.forUser(req.user.id);
+  await Feedback.set(req.user.id, gameId, signal);
+  await refreshSession(res, req.user.id);
+  const rows = await Feedback.forUser(req.user.id);
   // Return the refreshed profile so the client can update the taste bars in
   // the same round trip -- one request per interaction, no refetch.
   res.json({ ok: true, profile: tasteProfile(rows) });
+  } catch (err) { next(err); }
 });
 
-router.delete('/feedback/:gameId', requireAuth, (req, res) => {
-  Feedback.clear(req.user.id, req.params.gameId);
-  refreshSession(res, req.user.id);
-  res.json({ ok: true, profile: tasteProfile(Feedback.forUser(req.user.id)) });
+router.delete('/feedback/:gameId', requireAuth, async (req, res, next) => {
+  try {
+    await Feedback.clear(req.user.id, req.params.gameId);
+    await refreshSession(res, req.user.id);
+    res.json({ ok: true, profile: tasteProfile(await Feedback.forUser(req.user.id)) });
+  } catch (err) { next(err); }
 });
 
 export default router;

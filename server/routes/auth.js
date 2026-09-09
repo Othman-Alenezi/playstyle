@@ -21,15 +21,15 @@ const loginLimit = rateLimit({
 });
 
 /** Seed picks from the guest taste quiz, saved with the new account. */
-function applySeed(userId, seed) {
+async function applySeed(userId, seed) {
   if (!Array.isArray(seed)) return 0;
   const entries = seed
     .filter((id) => typeof id === 'string' && byId.has(id))
     .slice(0, 30)
     .map((gameId) => ({ gameId, signal: 'love' }));
   if (entries.length) {
-    Feedback.setMany(userId, entries, Date.now());
-    Users.markOnboarded(userId);
+    await Feedback.setMany(userId, entries, Date.now());
+    await Users.markOnboarded(userId);
   }
   return entries.length;
 }
@@ -41,11 +41,11 @@ router.post('/signup', signupLimit, async (req, res, next) => {
 
     // This does confirm an email is registered. That is a deliberate trade:
     // without it, "account already exists" becomes an unexplained failure.
-    const existingByEmail = Users.byEmail(value.email);
+    const existingByEmail = await Users.byEmail(value.email);
     if (existingByEmail && !isRebuiltAccount(existingByEmail)) {
       return res.status(409).json({ error: 'email_taken', fields: { email: 'That email already has an account.' } });
     }
-    const existingByName = Users.byUsername(value.username);
+    const existingByName = await Users.byUsername(value.username);
     if (existingByName && !isRebuiltAccount(existingByName)) {
       return res.status(409).json({ error: 'username_taken', fields: { username: 'That username is taken.' } });
     }
@@ -53,7 +53,7 @@ router.post('/signup', signupLimit, async (req, res, next) => {
     // owns the address claim it rather than locking them out of their own
     // email. Only reachable on a host where accounts get rebuilt from a cookie.
     for (const stale of [existingByEmail, existingByName]) {
-      if (stale && isRebuiltAccount(stale)) Users.destroy(stale.id);
+      if (stale && isRebuiltAccount(stale)) await Users.destroy(stale.id);
     }
 
     const user = {
@@ -63,9 +63,9 @@ router.post('/signup', signupLimit, async (req, res, next) => {
       password_hash: await hashPassword(value.password),
       created_at: Date.now(),
     };
-    Users.create(user);
-    const seeded = applySeed(user.id, req.body?.seed);
-    startSession(res, user.id, req.get('user-agent'));
+    await Users.create(user);
+    const seeded = await applySeed(user.id, req.body?.seed);
+    await startSession(res, user.id, req.get('user-agent'));
     res.status(201).json({ user: { ...publicUser(user), onboarded: seeded > 0 }, seeded });
   } catch (err) { next(err); }
 });
@@ -75,7 +75,7 @@ router.post('/login', loginLimit, async (req, res, next) => {
     const { errors, value } = validateLogin(req.body ?? {});
     if (Object.keys(errors).length) return res.status(400).json({ error: 'invalid', fields: errors });
 
-    const user = Users.byEmail(value.email);
+    const user = await Users.byEmail(value.email);
 
     // A rebuilt account cannot verify a password here. Say so plainly rather
     // than returning "incorrect password" for a password that is correct.
@@ -97,15 +97,17 @@ router.post('/login', loginLimit, async (req, res, next) => {
       return res.status(401).json({ error: 'bad_credentials', message: 'Email or password is incorrect.' });
     }
 
-    const seeded = applySeed(user.id, req.body?.seed);
-    startSession(res, user.id, req.get('user-agent'));
-    res.json({ user: publicUser(Users.byId(user.id)), seeded });
+    const seeded = await applySeed(user.id, req.body?.seed);
+    await startSession(res, user.id, req.get('user-agent'));
+    res.json({ user: publicUser(await Users.byId(user.id)), seeded });
   } catch (err) { next(err); }
 });
 
-router.post('/logout', (req, res) => {
-  endSession(res, req.cookies?.[COOKIE]);
-  res.json({ ok: true });
+router.post('/logout', async (req, res, next) => {
+  try {
+    await endSession(res, req.cookies?.[COOKIE]);
+    res.json({ ok: true });
+  } catch (err) { next(err); }
 });
 
 router.get('/me', (req, res) => {
@@ -113,10 +115,12 @@ router.get('/me', (req, res) => {
 });
 
 /** Account deletion. Cascades to sessions and feedback. */
-router.delete('/me', requireAuth, (req, res) => {
-  Users.destroy(req.user.id);
-  endSession(res, req.cookies?.[COOKIE]);
-  res.json({ ok: true });
+router.delete('/me', requireAuth, async (req, res, next) => {
+  try {
+    await Users.destroy(req.user.id);
+    await endSession(res, req.cookies?.[COOKIE]);
+    res.json({ ok: true });
+  } catch (err) { next(err); }
 });
 
 export default router;
